@@ -72,8 +72,8 @@ body::before {
 /* ---------- Layout ---------- */
 .wrap { max-width: var(--maxw); margin-inline: auto; padding-inline: var(--gutter); position: relative; z-index: 1; }
 section { position: relative; z-index: 1; }
-.section { padding-block: clamp(72px, 11vw, 160px); }
-.section--tight { padding-block: clamp(48px, 7vw, 96px); }
+.section { padding-block: clamp(56px, 8vw, 112px); }
+.section--tight { padding-block: clamp(36px, 5vw, 72px); }
 
 /* ---------- Typography ---------- */
 .display {
@@ -185,13 +185,13 @@ section { position: relative; z-index: 1; }
 .mobile-menu a:hover { color: var(--amber); }
 
 /* ---------- Footer ---------- */
-.site-footer { border-top: 1px solid var(--line); padding-block: clamp(56px, 8vw, 96px) 36px; position: relative; z-index: 1; }
-.footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px; }
+.site-footer { border-top: 1px solid var(--line); padding-block: clamp(44px, 6vw, 72px) 28px; position: relative; z-index: 1; }
+.footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 32px; }
 .footer-col h4 { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); margin-bottom: 18px; font-weight: 500; }
 .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 11px; }
 .footer-col a { color: var(--muted); font-size: 0.95rem; transition: color 0.25s; }
 .footer-col a:hover { color: var(--amber); }
-.footer-bottom { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--line); color: var(--faint); font-size: 0.85rem; flex-wrap: wrap; }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; gap: 18px; margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--faint); font-size: 0.85rem; flex-wrap: wrap; }
 .footer-cta { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.05; max-width: 16ch; }
 
 /* ---------- Cards ---------- */
@@ -199,7 +199,7 @@ section { position: relative; z-index: 1; }
   background: linear-gradient(180deg, var(--bg-1), var(--bg-0));
   border: 1px solid var(--line);
   border-radius: 18px;
-  padding: 28px;
+  padding: 24px;
   transition: transform 0.5s var(--ease), border-color 0.4s, box-shadow 0.5s, background 0.4s;
 }
 .card:hover { transform: translateY(-4px); border-color: var(--line-strong); box-shadow: 0 24px 60px -30px oklch(0 0 0 / 0.8); }
@@ -266,13 +266,13 @@ section { position: relative; z-index: 1; }
 @media (prefers-reduced-motion: reduce) { .aurora i { animation: none; } }
 
 /* utility */
-.grid { display: grid; gap: 24px; }
+.grid { display: grid; gap: 20px; }
 .flow > * + * { margin-top: 1rem; }
 .center { text-align: center; }
 .mx-auto { margin-inline: auto; }
 .stack-sm { display: flex; flex-direction: column; gap: 8px; }
 .row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
-.between { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+.between { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; }
 
 /* number / stat */
 .stat-n { font-family: var(--font-display); font-size: clamp(2.6rem, 5vw, 4rem); line-height: 1; }
@@ -310,43 +310,43 @@ section { position: relative; z-index: 1; }
 .max-52 { max-width: 52ch; }
 .max-60 { max-width: 60ch; }
 .heading-offset { margin-top: 16px; }
-.section-heading { margin-bottom: 48px; }
+.section-heading { margin-bottom: 34px; }
 
 .hero-section {
-  padding-top: clamp(130px, 18vw, 210px);
-  padding-bottom: clamp(60px, 9vw, 120px);
+  padding-top: clamp(112px, 14vw, 168px);
+  padding-bottom: clamp(44px, 7vw, 84px);
   overflow: hidden;
 }
 
 .hero-title {
-  margin-top: 26px;
+  margin-top: 20px;
   max-width: 15ch;
 }
 
 .hero-lead {
-  margin-top: clamp(34px, 4vw, 46px);
+  margin-top: clamp(24px, 3vw, 34px);
 }
 
 .hero-actions {
-  margin-top: 40px;
+  margin-top: 28px;
 }
 
 .hero-stats {
   grid-template-columns: repeat(4, 1fr);
-  margin-top: clamp(56px, 8vw, 96px);
+  margin-top: clamp(36px, 5vw, 60px);
   border-top: 1px solid var(--line);
-  padding-top: 34px;
+  padding-top: 24px;
 }
 
 .marquee-section {
-  padding-block: 28px;
+  padding-block: 20px;
   border-block: 1px solid var(--line);
 }
 
 .marquee-wrap {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 24px;
   flex-wrap: wrap;
 }
 
@@ -370,11 +370,11 @@ section { position: relative; z-index: 1; }
 
 .featured-work {
   grid-template-columns: 1.2fr 1fr;
-  gap: 28px;
+  gap: 22px;
 }
 
 .stacked-work {
-  gap: 28px;
+  gap: 22px;
 }
 
 .image-card {
@@ -408,11 +408,11 @@ section { position: relative; z-index: 1; }
 }
 
 .case-meta {
-  padding: 24px 26px 28px;
+  padding: 20px 22px 24px;
 }
 
 .case-meta.compact {
-  padding: 22px 24px;
+  padding: 18px 20px;
 }
 
 .pill-row {
@@ -437,12 +437,12 @@ section { position: relative; z-index: 1; }
 
 .process-grid {
   grid-template-columns: repeat(4, 1fr);
-  margin-top: 56px;
+  margin-top: 36px;
   gap: 0;
 }
 
 .process-item {
-  padding: 28px;
+  padding: 22px;
   border-top: 1px solid var(--line-strong);
 }
 
@@ -455,7 +455,7 @@ section { position: relative; z-index: 1; }
 }
 
 .process-title {
-  margin-top: 18px;
+  margin-top: 12px;
   font-size: 1.35rem;
 }
 
@@ -465,7 +465,7 @@ section { position: relative; z-index: 1; }
 }
 
 .testimonial-card {
-  padding: clamp(36px, 5vw, 64px);
+  padding: clamp(30px, 4vw, 48px);
   background: linear-gradient(150deg, var(--bg-2), var(--bg-1));
   border-color: var(--line-strong);
 }
@@ -477,12 +477,12 @@ section { position: relative; z-index: 1; }
 .testimonial-quote {
   font-size: clamp(1.6rem, 3.4vw, 2.6rem);
   line-height: 1.18;
-  margin-top: 24px;
+  margin-top: 18px;
   max-width: 24ch;
 }
 
 .testimonial-person {
-  margin-top: 32px;
+  margin-top: 24px;
   gap: 14px;
 }
 
@@ -497,7 +497,7 @@ section { position: relative; z-index: 1; }
 }
 
 .insights-heading {
-  margin-bottom: 40px;
+  margin-bottom: 28px;
 }
 
 .insight-date {
@@ -509,40 +509,40 @@ section { position: relative; z-index: 1; }
 .cta-card {
   position: relative;
   overflow: hidden;
-  padding: clamp(44px, 7vw, 96px);
+  padding: clamp(34px, 5vw, 64px);
   text-align: center;
   border-color: var(--line-strong);
 }
 
 .cta-title {
-  margin-top: 22px;
+  margin-top: 16px;
   max-width: 18ch;
   margin-inline: auto;
 }
 
 .cta-text {
-  margin-top: 22px;
+  margin-top: 16px;
   text-align: center;
 }
 
 .cta-actions {
-  margin-top: 36px;
+  margin-top: 26px;
 }
 
 /* ---------- Page heroes ---------- */
 .page-hero {
-  padding-top: clamp(130px, 16vw, 200px);
-  padding-bottom: clamp(40px, 6vw, 72px);
+  padding-top: clamp(108px, 13vw, 160px);
+  padding-bottom: clamp(30px, 5vw, 54px);
   overflow: hidden;
 }
 
 .work-hero,
 .insights-hero {
-  padding-bottom: clamp(36px, 5vw, 56px);
+  padding-bottom: clamp(28px, 4vw, 44px);
 }
 
 .page-title {
-  margin-top: 22px;
+  margin-top: 16px;
   max-width: 20ch;
 }
 
@@ -554,21 +554,21 @@ section { position: relative; z-index: 1; }
 .case-title,
 .blog-title {
   font-size: clamp(2.6rem, 7vw, 5.4rem);
-  margin-top: 22px;
+  margin-top: 16px;
   max-width: 18ch;
 }
 
 .page-lead {
-  margin-top: clamp(28px, 3.5vw, 40px);
+  margin-top: clamp(20px, 2.8vw, 30px);
 }
 
 /* ---------- Services ---------- */
 .svc {
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
-  gap: clamp(28px, 5vw, 72px);
+  gap: clamp(24px, 4vw, 48px);
   align-items: center;
-  padding-block: clamp(48px, 7vw, 90px);
+  padding-block: clamp(34px, 5vw, 62px);
   border-top: 1px solid var(--line);
 }
 
@@ -584,18 +584,18 @@ section { position: relative; z-index: 1; }
 }
 
 .svc-title {
-  margin-top: 14px;
+  margin-top: 10px;
 }
 
 .svc-copy {
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .svc-list {
   list-style: none;
   display: grid;
-  gap: 12px;
-  margin-top: 26px;
+  gap: 10px;
+  margin-top: 18px;
 }
 
 .svc-list li {
@@ -618,13 +618,13 @@ section { position: relative; z-index: 1; }
 
 .price-heading {
   max-width: 48ch;
-  margin-bottom: 48px;
+  margin-bottom: 34px;
 }
 
 .price-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 20px;
 }
 
 .price--feat {
@@ -633,7 +633,7 @@ section { position: relative; z-index: 1; }
 }
 
 .price-desc {
-  margin-top: 18px;
+  margin-top: 14px;
   font-size: 0.95rem;
 }
 
@@ -641,7 +641,7 @@ section { position: relative; z-index: 1; }
   font-family: var(--font-display);
   font-size: 2.6rem;
   line-height: 1;
-  margin-top: 22px;
+  margin-top: 16px;
 }
 
 .price-tag span {
@@ -653,8 +653,8 @@ section { position: relative; z-index: 1; }
 .price-list {
   list-style: none;
   display: grid;
-  gap: 12px;
-  margin: 24px 0;
+  gap: 10px;
+  margin: 18px 0;
 }
 
 .price-list li {
@@ -672,11 +672,11 @@ section { position: relative; z-index: 1; }
 .faq-layout {
   display: grid;
   grid-template-columns: 0.7fr 1.3fr;
-  gap: clamp(28px, 5vw, 64px);
+  gap: clamp(24px, 4vw, 48px);
 }
 
 .faq-help {
-  margin-top: 18px;
+  margin-top: 12px;
 }
 
 .faq-help a {
@@ -690,7 +690,7 @@ section { position: relative; z-index: 1; }
 .faq summary {
   cursor: pointer;
   list-style: none;
-  padding: 26px 0;
+  padding: 20px 0;
   display: flex;
   justify-content: space-between;
   gap: 20px;
@@ -715,7 +715,7 @@ section { position: relative; z-index: 1; }
 
 .faq p {
   color: var(--muted);
-  padding-bottom: 26px;
+  padding-bottom: 20px;
   max-width: 70ch;
 }
 
@@ -724,7 +724,7 @@ section { position: relative; z-index: 1; }
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 34px;
+  margin-bottom: 24px;
 }
 
 .filter {
@@ -753,7 +753,7 @@ section { position: relative; z-index: 1; }
 .work-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 28px;
+  gap: 22px;
 }
 
 .case-card {
@@ -770,22 +770,22 @@ section { position: relative; z-index: 1; }
 }
 
 .case-hero {
-  padding-top: clamp(120px, 15vw, 180px);
-  padding-bottom: clamp(28px, 4vw, 48px);
+  padding-top: clamp(104px, 12vw, 150px);
+  padding-bottom: clamp(22px, 3vw, 36px);
 }
 
 .case-tags {
-  margin-top: 24px;
+  margin-top: 18px;
 }
 
 .case-hero-meta {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
+  gap: 20px;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
-  padding-block: 28px;
-  margin-top: 44px;
+  padding-block: 20px;
+  margin-top: 30px;
 }
 
 .case-hero-meta h4 {
@@ -799,18 +799,18 @@ section { position: relative; z-index: 1; }
 }
 
 .case-image-section {
-  margin-bottom: clamp(48px, 7vw, 90px);
+  margin-bottom: clamp(30px, 5vw, 56px);
 }
 
 .case-body {
   display: grid;
   grid-template-columns: 0.8fr 1.2fr;
-  gap: clamp(28px, 5vw, 72px);
+  gap: clamp(24px, 4vw, 48px);
 }
 
 .case-body p {
   color: var(--muted);
-  margin-top: 16px;
+  margin-top: 12px;
   max-width: 60ch;
 }
 
@@ -823,7 +823,7 @@ section { position: relative; z-index: 1; }
 }
 
 .case-bullets {
-  margin-top: 24px;
+  margin-top: 18px;
 }
 
 .constrained-rule {
@@ -833,13 +833,13 @@ section { position: relative; z-index: 1; }
 
 .results-eyebrow {
   display: block;
-  margin-bottom: 40px;
+  margin-bottom: 28px;
 }
 
 .big-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
+  gap: 22px;
 }
 
 .big-stat-value {
@@ -849,19 +849,19 @@ section { position: relative; z-index: 1; }
 .gallery {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 24px;
+  gap: 20px;
 }
 
 .gallery-side {
-  gap: 24px;
+  gap: 20px;
 }
 
 .next-case {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 24px;
-  padding: clamp(28px, 4vw, 44px);
+  gap: 20px;
+  padding: clamp(24px, 3.5vw, 36px);
   flex-wrap: wrap;
 }
 
@@ -879,28 +879,28 @@ section { position: relative; z-index: 1; }
 .story-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: clamp(28px, 5vw, 72px);
+  gap: clamp(24px, 4vw, 48px);
   align-items: center;
 }
 
 .story-copy {
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .values {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0;
-  margin-top: 40px;
+  margin-top: 28px;
 }
 
 .value {
-  padding: 32px 28px 32px 0;
+  padding: 24px 22px 24px 0;
   border-top: 1px solid var(--line-strong);
 }
 
 .value:not(:nth-child(3n+1)) {
-  padding-left: 28px;
+  padding-left: 22px;
 }
 
 .value-number {
@@ -908,7 +908,7 @@ section { position: relative; z-index: 1; }
 }
 
 .value-title {
-  margin-top: 14px;
+  margin-top: 10px;
   font-size: 1.4rem;
 }
 
@@ -920,7 +920,7 @@ section { position: relative; z-index: 1; }
 .team-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
+  gap: 20px;
 }
 
 .member-photo {
@@ -930,7 +930,7 @@ section { position: relative; z-index: 1; }
 .member h3 {
   font-family: var(--font-display);
   font-size: 1.3rem;
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .member .role {
@@ -945,7 +945,7 @@ section { position: relative; z-index: 1; }
 .feat-post {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
-  gap: clamp(24px, 4vw, 56px);
+  gap: clamp(20px, 3.5vw, 40px);
   align-items: center;
   overflow: hidden;
   padding: 0;
@@ -958,26 +958,26 @@ section { position: relative; z-index: 1; }
 }
 
 .feat-post-copy {
-  padding: clamp(28px, 4vw, 48px);
+  padding: clamp(24px, 3.5vw, 36px);
 }
 
 .feat-post-title {
-  margin-top: 18px;
-}
-
-.feat-post-excerpt {
   margin-top: 14px;
 }
 
+.feat-post-excerpt {
+  margin-top: 10px;
+}
+
 .feat-post-date {
-  margin-top: 22px;
+  margin-top: 16px;
   gap: 14px;
 }
 
 .post-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
+  gap: 22px;
 }
 
 .post-card {
@@ -990,16 +990,16 @@ section { position: relative; z-index: 1; }
   font-size: 0.78rem;
   color: var(--faint);
   margin-top: auto;
-  padding-top: 20px;
+  padding-top: 14px;
 }
 
 .category-row {
   gap: 10px;
-  margin-bottom: 34px;
+  margin-bottom: 24px;
 }
 
 .newsletter-card {
-  padding: clamp(36px, 5vw, 64px);
+  padding: clamp(28px, 4vw, 48px);
   border-color: var(--line-strong);
 }
 
@@ -1012,7 +1012,7 @@ section { position: relative; z-index: 1; }
   grid-template-columns: 1fr auto;
   gap: 16px;
   align-items: center;
-  margin-top: 28px;
+  margin-top: 20px;
   max-width: 560px;
 }
 
@@ -1041,7 +1041,7 @@ section { position: relative; z-index: 1; }
 }
 
 .post-detail-pill {
-  margin-top: 24px;
+  margin-top: 18px;
 }
 
 .blog-title {
@@ -1049,11 +1049,11 @@ section { position: relative; z-index: 1; }
 }
 
 .blog-excerpt {
-  margin-top: 24px;
+  margin-top: 18px;
 }
 
 .blog-date {
-  margin-top: 24px;
+  margin-top: 16px;
 }
 
 .blog-body {
@@ -1064,40 +1064,40 @@ section { position: relative; z-index: 1; }
   color: var(--muted);
   font-size: clamp(1.08rem, 1.7vw, 1.25rem);
   line-height: 1.7;
-  margin-top: 20px;
+  margin-top: 14px;
 }
 
 /* ---------- Contact ---------- */
 .contact-section {
-  padding-top: clamp(130px, 16vw, 200px);
+  padding-top: clamp(108px, 13vw, 160px);
   overflow: hidden;
 }
 
 .contact-grid {
   display: grid;
   grid-template-columns: 0.85fr 1.15fr;
-  gap: clamp(32px, 5vw, 80px);
+  gap: clamp(26px, 4vw, 56px);
   align-items: start;
 }
 
 .contact-title {
-  margin-top: 20px;
+  margin-top: 14px;
   max-width: 14ch;
 }
 
 .contact-lead {
-  margin-top: clamp(26px, 3vw, 36px);
+  margin-top: clamp(18px, 2.5vw, 26px);
 }
 
 .contact-list {
-  margin-top: 36px;
+  margin-top: 24px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .field label {
@@ -1114,7 +1114,7 @@ section { position: relative; z-index: 1; }
   background: oklch(1 0 0 / 0.03);
   border: 1px solid var(--line-strong);
   border-radius: 12px;
-  padding: 0.9em 1.1em;
+  padding: 0.82em 1em;
   color: var(--text);
   font: inherit;
   transition: border-color 0.3s, background 0.3s;
@@ -1123,7 +1123,7 @@ section { position: relative; z-index: 1; }
 
 .field textarea {
   resize: vertical;
-  min-height: 130px;
+  min-height: 112px;
 }
 
 .field input::placeholder,
@@ -1149,19 +1149,19 @@ section { position: relative; z-index: 1; }
 .two {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 14px;
 }
 
 .contact-card {
-  padding: clamp(28px, 4vw, 44px);
+  padding: clamp(24px, 3.5vw, 36px);
   border-color: var(--line-strong);
 }
 
 .contact-item {
   display: flex;
-  gap: 14px;
+  gap: 12px;
   align-items: flex-start;
-  padding: 20px 0;
+  padding: 14px 0;
   border-top: 1px solid var(--line);
 }
 
