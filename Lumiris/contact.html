@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Contato — Horizon Collective</title>
+<meta name="description" content="Solicite um diagnóstico gratuito. Vamos colocar seu negócio no horizonte certo." />
+<link rel="stylesheet" href="assets/styles.css" />
+<script>
+  (function () { try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !document.hidden) document.documentElement.classList.add('anim'); } catch (e) {} })();
+</script>
+<style>
+  .contact-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(32px,5vw,80px); align-items: start; }
+  .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .field label { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+  .field input, .field textarea, .field select {
+    background: oklch(1 0 0 / 0.03); border: 1px solid var(--line-strong); border-radius: 12px;
+    padding: 0.9em 1.1em; color: var(--text); font: inherit; transition: border-color 0.3s, background 0.3s; width: 100%;
+  }
+  .field textarea { resize: vertical; min-height: 130px; }
+  .field input::placeholder, .field textarea::placeholder { color: var(--faint); }
+  .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--amber); background: oklch(1 0 0 / 0.05); }
+  .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23E89A4C' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1.1em center; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .contact-item { display: flex; gap: 14px; align-items: flex-start; padding: 20px 0; border-top: 1px solid var(--line); }
+  .contact-item .dot2 { width: 9px; height: 9px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 10px var(--amber); margin-top: 7px; flex: none; }
+  .contact-item h4 { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); margin-bottom: 5px; }
+  @media (max-width: 860px){ .contact-grid { grid-template-columns: 1fr; } .two { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap nav">
+    <a href="index.html" class="logo" aria-label="Horizon Collective — início">
+      <svg class="logo-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <defs><linearGradient id="hcMark" x1="6" y1="8" x2="34" y2="34" gradientUnits="userSpaceOnUse"><stop stop-color="#F4C76B"/><stop offset="0.55" stop-color="#E89A4C"/><stop offset="1" stop-color="#C75B36"/></linearGradient></defs>
+        <path d="M7 23.5a13 13 0 0 1 26 0z" fill="url(#hcMark)" /><line x1="4" y1="28.6" x2="36" y2="28.6" stroke="url(#hcMark)" stroke-width="2.6" stroke-linecap="round" /><line x1="13" y1="33.6" x2="27" y2="33.6" stroke="url(#hcMark)" stroke-width="2.6" stroke-linecap="round" opacity="0.5" />
+      </svg>
+      <span class="stack-sm" style="gap:1px"><span class="logo-word"><b>Horizon</b> Collective</span><span class="logo-sub">Studio · Web · SEO</span></span>
+    </a>
+    <nav class="nav-links" aria-label="Principal">
+      <a class="nav-link" href="index.html">Início</a><a class="nav-link" href="services.html">Serviços</a><a class="nav-link" href="work.html">Cases</a><a class="nav-link" href="about.html">Sobre</a><a class="nav-link" href="insights.html">Insights</a><a class="nav-link active" href="contact.html">Contato</a>
+    </nav>
+    <div class="nav-right"><a href="contact.html" class="btn btn--primary">Começar projeto <span class="arr">→</span></a><button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span><span></span></button></div>
+  </div>
+</header>
+<div class="mobile-menu" id="mobileMenu"><a href="index.html">Início</a><a href="services.html">Serviços</a><a href="work.html">Cases</a><a href="about.html">Sobre</a><a href="insights.html">Insights</a><a href="contact.html">Contato</a></div>
+
+<main>
+
+<section class="section" style="padding-top:clamp(130px,16vw,200px); overflow:hidden">
+  <div class="aurora" aria-hidden="true" style="opacity:0.5" data-parallax="14"><i></i><i></i><i></i></div>
+  <div class="wrap contact-grid">
+
+    <!-- left -->
+    <div>
+      <span class="eyebrow" data-reveal>Vamos conversar</span>
+      <h1 class="h1" data-reveal data-reveal-delay="1" style="margin-top:20px; max-width:14ch">Pronto para ser <em class="serif-i warm-grad">encontrado</em>?</h1>
+      <p class="lead" data-reveal data-reveal-delay="2" style="margin-top:clamp(26px,3vw,36px)">Conte sobre seu negócio. Em até 48h enviamos um diagnóstico gratuito do seu site e da sua presença na busca — sem compromisso.</p>
+
+      <div data-reveal data-reveal-delay="3" style="margin-top:36px">
+        <div class="contact-item"><span class="dot2"></span><div><h4>E-mail</h4><a href="mailto:ola@horizoncollective.studio" style="color:var(--text)">ola@horizoncollective.studio</a></div></div>
+        <div class="contact-item"><span class="dot2"></span><div><h4>WhatsApp</h4><a href="#" style="color:var(--text)">+55 11 9 9999-0000</a></div></div>
+        <div class="contact-item"><span class="dot2"></span><div><h4>Onde estamos</h4><span class="muted">São Paulo · atendimento remoto em todo o Brasil</span></div></div>
+        <div class="contact-item" style="border-bottom:1px solid var(--line)"><span class="dot2"></span><div><h4>Tempo de resposta</h4><span class="muted">Em até 48 horas úteis</span></div></div>
+      </div>
+    </div>
+
+    <!-- form -->
+    <div class="card" data-reveal data-reveal-delay="1" style="padding:clamp(28px,4vw,44px); border-color:var(--line-strong)">
+      <form data-contact>
+        <div class="two">
+          <div class="field"><label for="nome">Nome</label><input id="nome" type="text" required placeholder="Seu nome" /></div>
+          <div class="field"><label for="empresa">Negócio</label><input id="empresa" type="text" placeholder="Nome do seu negócio" /></div>
+        </div>
+        <div class="two">
+          <div class="field"><label for="email">E-mail</label><input id="email" type="email" required placeholder="seu@email.com" /></div>
+          <div class="field"><label for="tel">WhatsApp</label><input id="tel" type="tel" placeholder="(11) 9 9999-0000" /></div>
+        </div>
+        <div class="two">
+          <div class="field"><label for="servico">Serviço de interesse</label>
+            <select id="servico"><option>Site novo / redesign</option><option>SEO &amp; tráfego orgânico</option><option>GEO · IA Search</option><option>E-commerce</option><option>Não sei, preciso de orientação</option></select>
+          </div>
+          <div class="field"><label for="budget">Orçamento estimado</label>
+            <select id="budget"><option>Até R$ 5 mil</option><option>R$ 5 mil – R$ 15 mil</option><option>R$ 15 mil – R$ 40 mil</option><option>Acima de R$ 40 mil</option><option>Mensalidade recorrente</option></select>
+          </div>
+        </div>
+        <div class="field"><label for="msg">Conte sobre seu projeto</label><textarea id="msg" placeholder="O que você quer alcançar? Onde está hoje?"></textarea></div>
+        <button type="submit" class="btn btn--primary btn--lg" style="width:100%; justify-content:center">Enviar mensagem <span class="arr">→</span></button>
+        <p data-success style="display:none; color:var(--amber); margin-top:16px; text-align:center">Recebido! Vamos te responder em até 48h. ✦</p>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer" style="margin-top:clamp(48px,8vw,96px)">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-col"><a href="index.html" class="logo" style="margin-bottom:22px"><svg class="logo-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M7 23.5a13 13 0 0 1 26 0z" fill="url(#hcMark)" /><line x1="4" y1="28.6" x2="36" y2="28.6" stroke="url(#hcMark)" stroke-width="2.6" stroke-linecap="round" /><line x1="13" y1="33.6" x2="27" y2="33.6" stroke="url(#hcMark)" stroke-width="2.6" stroke-linecap="round" opacity="0.5" /></svg><span class="logo-word"><b>Horizon</b> Collective</span></a><p class="footer-cta">Marcas pequenas, presença gigante.</p></div>
+      <div class="footer-col"><h4>Serviços</h4><ul><li><a href="services.html">Web Design</a></li><li><a href="services.html">Desenvolvimento</a></li><li><a href="services.html">SEO</a></li><li><a href="services.html">Tráfego Orgânico</a></li><li><a href="services.html">GEO · IA Search</a></li></ul></div>
+      <div class="footer-col"><h4>Estúdio</h4><ul><li><a href="about.html">Sobre nós</a></li><li><a href="work.html">Cases</a></li><li><a href="insights.html">Insights</a></li><li><a href="contact.html">Contato</a></li></ul></div>
+      <div class="footer-col"><h4>Contato</h4><ul><li><a href="mailto:ola@horizoncollective.studio">ola@horizoncollective.studio</a></li><li><a href="#">Instagram</a></li><li><a href="#">LinkedIn</a></li><li><a href="#">Behance</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Horizon Collective — Estúdio digital. São Paulo · Remoto.</span><span>Feito para quem cresce.</span></div>
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+</body>
+</html>

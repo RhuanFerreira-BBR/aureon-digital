@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rhuanferreira-bbr.github.io/horizon-collective/sitemap.xml

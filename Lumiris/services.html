@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Serviços — Horizon Collective</title>
+<meta name="description" content="Web design, desenvolvimento, SEO, tráfego orgânico e GEO. Serviços de ponta a ponta para pequenos negócios." />
+<link rel="stylesheet" href="assets/styles.css" />
+<script>
+  (function () { try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !document.hidden) document.documentElement.classList.add('anim'); } catch (e) {} })();
+</script>
+<style>
+  /* page-local: service rows + accordion + price */
+  .svc { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(28px,5vw,72px); align-items: center; padding-block: clamp(48px,7vw,90px); border-top: 1px solid var(--line); }
+  .svc:nth-child(even) .svc-media { order: -1; }
+  .svc-num { font-family: var(--font-mono); color: var(--amber); letter-spacing: 0.1em; font-size: 0.8rem; }
+  .svc-list { list-style: none; display: grid; gap: 12px; margin-top: 26px; }
+  .svc-list li { display: flex; gap: 12px; align-items: flex-start; color: var(--muted); }
+  .svc-list li::before { content: ""; width: 7px; height: 7px; margin-top: 9px; border-radius: 50%; background: var(--terra); flex: none; box-shadow: 0 0 8px var(--terra); }
+  .price-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+  .price--feat { border-color: oklch(0.82 0.13 72 / 0.35); box-shadow: var(--glow-amber); }
+  .price-tag { font-family: var(--font-display); font-size: 2.6rem; line-height: 1; }
+  .price-list { list-style: none; display: grid; gap: 12px; margin: 24px 0; }
+  .price-list li { display: flex; gap: 10px; color: var(--muted); font-size: 0.95rem; }
+  .price-list li::before { content: "→"; color: var(--amber); }
+  .faq { border-top: 1px solid var(--line); }
+  .faq summary { cursor: pointer; list-style: none; padding: 26px 0; display: flex; justify-content: space-between; gap: 20px; align-items: center; font-family: var(--font-display); font-size: clamp(1.25rem,2.4vw,1.7rem); }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary .pm { color: var(--amber); transition: transform 0.3s var(--ease); font-family: var(--font-sans); }
+  .faq details[open] summary .pm { transform: rotate(45deg); }
+  .faq p { color: var(--muted); padding-bottom: 26px; max-width: 70ch; }
+  @media (max-width: 820px){ .svc { grid-template-columns: 1fr; } .svc:nth-child(even) .svc-media { order: 0; } .price-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap nav">
+    <a href="index.html" class="logo" aria-label="Horizon Collective — início">
+      <svg class="logo-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <defs><linearGradient id="hcMark" x1="6" y1="8" x2="34" y2="34" gradientUnits="userSpaceOnUse"><stop stop-color="#F4C76B"/><stop offset="0.55" stop-color="#E89A4C"/><stop offset="1" stop-color="#C75B36"/></linearGradient></defs>
+        <path d="M7 23.5a13 13 0 0 1 26 0z" fill="url(#hcMark)" />
+        <line x1="4" y1="28.6" x2="36" y2="28.6" stroke="url(#hcMark)" stroke-width="2.6" stroke-linecap="round" />
+        <line x1="13" y1="33.6" x2="27" y2="33.6" stroke="url(#hcMark)" stroke-width="2.6" stroke-linecap="round" opacity="0.5" />
+      </svg>
+      <span class="stack-sm" style="gap:1px"><span class="logo-word"><b>Horizon</b> Collective</span><span class="logo-sub">Studio · Web · SEO</span></span>
+    </a>
+    <nav class="nav-links" aria-label="Principal">
+      <a class="nav-link" href="index.html">Início</a>
+      <a class="nav-link active" href="services.html">Serviços</a>
+      <a class="nav-link" href="work.html">Cases</a>
+      <a class="nav-link" href="about.html">Sobre</a>
+      <a class="nav-link" href="insights.html">Insights</a>
+      <a class="nav-link" href="contact.html">Contato</a>
+    </nav>
+    <div class="nav-right">
+      <a href="contact.html" class="btn btn--primary">Começar projeto <span class="arr">→</span></a>
+      <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Início</a><a href="services.html">Serviços</a><a href="work.html">Cases</a><a href="about.html">Sobre</a><a href="insights.html">Insights</a><a href="contact.html">Contato</a>
+</div>
+
+<main>
+
+<!-- hero -->
+<section class="section" style="padding-top:clamp(130px,16vw,200px); padding-bottom:clamp(40px,6vw,72px); overflow:hidden">
+  <div class="aurora" aria-hidden="true" style="opacity:0.55" data-parallax="14"><i></i><i></i><i></i></div>
+  <div class="wrap">
+    <span class="eyebrow" data-reveal>Serviços</span>
+    <h1 class="h1" data-reveal data-reveal-delay="1" style="margin-top:22px; max-width:20ch">Tudo para seu negócio ser <em class="serif-i warm-grad">encontrado</em> e escolhido.</h1>
+    <p class="lead" data-reveal data-reveal-delay="2" style="margin-top:clamp(28px,3.5vw,40px)">Estratégia, design, código e crescimento sob o mesmo teto. Sem terceirizar, sem ruído — uma equipe cuidando da sua presença digital de ponta a ponta.</p>
+  </div>
+</section>
+
+<!-- service rows -->
+<section class="section--tight">
+  <div class="wrap">
+
+    <article class="svc">
+      <div>
+        <div class="svc-num">01 — WEB DESIGN</div>
+        <h2 class="h2" style="margin-top:14px">Design que constrói confiança</h2>
+        <p class="muted" style="margin-top:16px">Identidade visual e interfaces que fazem um negócio pequeno transmitir credibilidade de marca grande — sem perder a personalidade.</p>
+        <ul class="svc-list">
+          <li>Identidade visual e direção de arte</li>
+          <li>UI/UX de sites e landing pages</li>
+          <li>Design system e biblioteca de componentes</li>
+          <li>Protótipos navegáveis antes de codar</li>
+        </ul>
+      </div>
+      <div class="svc-media"><div class="ph" style="aspect-ratio:4/3"><span>Mockup — Web Design</span></div></div>
+    </article>
+
+    <article class="svc">
+      <div>
+        <div class="svc-num">02 — DESENVOLVIMENTO</div>
+        <h2 class="h2" style="margin-top:14px">Sites rápidos e sólidos</h2>
+        <p class="muted" style="margin-top:16px">Código limpo, performático e fácil de gerenciar. Performance que o Google premia e que o seu cliente sente na ponta dos dedos.</p>
+        <ul class="svc-list">
+          <li>Sites institucionais e landing pages</li>
+          <li>E-commerce e catálogos</li>
+          <li>CMS sob medida — você no controle</li>
+          <li>Otimização de Core Web Vitals</li>
+        </ul>
+      </div>
+      <div class="svc-media"><div class="ph" style="aspect-ratio:4/3"><span>Mockup — Desenvolvimento</span></div></div>
+    </article>
+
+    <article class="svc">
+      <div>
+        <div class="svc-num">03 — SEO</div>
+        <h2 class="h2" style="margin-top:14px">No topo de quem procura</h2>
+        <p class="muted" style="margin-top:16px">Da estrutura técnica ao conteúdo estratégico: arquitetura para subir nas buscas e autoridade para permanecer lá.</p>
+        <ul class="svc-list">
+          <li>SEO técnico e auditoria completa</li>
+          <li>SEO local — Google Business Profile</li>
+          <li>Pesquisa de palavras-chave e intenção</li>
+          <li>Link building e autoridade de domínio</li>
+        </ul>
+      </div>
+      <div class="svc-media"><div class="ph" style="aspect-ratio:4/3"><span>Gráfico — Evolução SEO</span></div></div>
+    </article>
+
+    <article class="svc">
+      <div>
+        <div class="svc-num">04 — TRÁFEGO ORGÂNICO &amp; GEO</div>
+        <h2 class="h2" style="margin-top:14px">Visibilidade que não depende de anúncio</h2>
+        <p class="muted" style="margin-top:16px">Conteúdo, autoridade e otimização para mecanismos generativos. Apareça nas buscas tradicionais — e nas respostas do ChatGPT, Gemini e Perplexity.</p>
+        <ul class="svc-list">
+          <li>Estratégia de conteúdo e blog</li>
+          <li>GEO — otimização para IA generativa</li>
+          <li>Analytics, CRO e testes A/B</li>
+          <li>Relatórios claros e mensais</li>
+        </ul>
+      </div>
+      <div class="svc-media"><div class="ph" style="aspect-ratio:4/3"><span>Painel — Analytics &amp; GEO</span></div></div>
+    </article>
+
+  </div>
+</section>
+
+<!-- packages -->
+<section class="section" style="background:linear-gradient(180deg, var(--bg-1), var(--bg-0))">
+  <div class="wrap">
+    <div style="max-width:48ch; margin-bottom:48px">
+      <span class="eyebrow" data-reveal>Pacotes</span>
+      <h2 class="h2" data-reveal data-reveal-delay="1" style="margin-top:16px">Planos para cada momento do seu negócio</h2>
+    </div>
+    <div class="price-grid">
+      <article class="card" data-reveal>
+        <span class="pill">Essencial</span>
+        <p class="muted" style="margin-top:18px; font-size:0.95rem">Para tirar a marca do papel com presença profissional.</p>
+        <div class="price-tag warm-grad" style="margin-top:22px">R$ 4,9k<span style="font-size:1rem; color:var(--faint); -webkit-text-fill-color:var(--faint)"> / projeto</span></div>
+        <ul class="price-list">
+          <li>Site de até 5 páginas</li>
+          <li>Design + desenvolvimento</li>
+          <li>SEO técnico essencial</li>
+          <li>Entrega em 3 semanas</li>
+        </ul>
+        <a href="contact.html" class="btn btn--ghost" style="width:100%; justify-content:center">Escolher</a>
+      </article>
+
+      <article class="card price--feat" data-reveal data-reveal-delay="1">
+        <div class="row" style="justify-content:space-between"><span class="pill pill--accent"><span class="dot"></span> Crescimento</span><span class="faint" style="font-family:var(--font-mono); font-size:0.7rem">MAIS POPULAR</span></div>
+        <p class="muted" style="margin-top:18px; font-size:0.95rem">Para quem quer ser encontrado e converter de verdade.</p>
+        <div class="price-tag warm-grad" style="margin-top:22px">R$ 2,4k<span style="font-size:1rem; color:var(--faint); -webkit-text-fill-color:var(--faint)"> / mês</span></div>
+        <ul class="price-list">
+          <li>Tudo do Essencial</li>
+          <li>SEO contínuo + conteúdo</li>
+          <li>Tráfego orgânico e GEO</li>
+          <li>Relatórios e reuniões mensais</li>
+        </ul>
+        <a href="contact.html" class="btn btn--primary" style="width:100%; justify-content:center">Escolher <span class="arr">→</span></a>
+      </article>
+
+      <article class="card" data-reveal data-reveal-delay="2">
+        <span class="pill">Autoridade</span>
+        <p class="muted" style="margin-top:18px; font-size:0.95rem">Para liderar o setor e dominar a busca da sua categoria.</p>
+        <div class="price-tag warm-grad" style="margin-top:22px">Sob<span style="font-size:1rem; color:var(--faint); -webkit-text-fill-color:var(--faint)"> medida</span></div>
+        <ul class="price-list">
+          <li>Estratégia dedicada</li>
+          <li>Conteúdo em escala</li>
+          <li>Link building avançado</li>
+          <li>Squad exclusivo</li>
+        </ul>
+        <a href="contact.html" class="btn btn--ghost" style="width:100%; justify-content:center">Falar com a gente</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+  <div class="wrap" style="display:grid; grid-template-columns:0.7fr 1.3fr; gap:clamp(28px,5vw,64px)">
+    <div>
+      <span class="eyebrow" data-reveal>Dúvidas</span>
+      <h2 class="h2" data-reveal data-reveal-delay="1" style="margin-top:16px">Perguntas frequentes</h2>
+      <p class="muted" data-reveal data-reveal-delay="2" style="margin-top:18px">Não achou o que procurava? <a href="contact.html" style="color:var(--amber)">Fale com a gente →</a></p>
+    </div>
+    <div data-reveal>
+      <div class="faq"><details><summary>Quanto tempo leva um projeto? <span class="pm">+</span></summary><p>Sites essenciais ficam prontos em cerca de 3 semanas. Projetos maiores, com e-commerce ou conteúdo extenso, levam de 6 a 10 semanas. Definimos o cronograma exato no diagnóstico inicial.</p></details></div>
+      <div class="faq"><details><summary>Vou conseguir gerenciar o site sozinho? <span class="pm">+</span></summary><p>Sim. Entregamos um CMS simples e fazemos um treinamento para sua equipe atualizar textos, imagens e posts sem depender de código.</p></details></div>
+      <div class="faq"><details><summary>Em quanto tempo vejo resultado de SEO? <span class="pm">+</span></summary><p>SEO é construção de autoridade: os primeiros movimentos aparecem entre 60 e 90 dias, com ganhos compostos ao longo dos meses. Somos transparentes sobre expectativas desde o início.</p></details></div>
+      <div class="faq"><details><summary>O que é GEO e por que eu deveria me importar? <span class="pm">+</span></summary><p>GEO (Generative Engine Optimization) é otimizar sua marca para ser citada por IAs como ChatGPT e Gemini. Cada vez mais gente busca respostas por lá — e queremos que a sua marca seja a resposta.</p></details></div>
+      <div class="faq"><details><summary>Vocês atendem negócios fora de São Paulo? <span class="pm">+</span></summary><p>Atendemos todo o Brasil de forma remota. Boa parte dos nossos clientes nunca nos viu pessoalmente — e os resultados falam por si.</p></details></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="card" data-reveal style="position:relative; overflow:hidden; padding:clamp(44px,7vw,96px); text-align:center; border-color:var(--line-strong)">
+      <div class="aurora" aria-hidden="true" style="opacity:0.6"><i></i><i></i><i></i></div>
+      <div style="position:relative; z-index:1">
+        <h2 class="h1" style="max-width:18ch; margin-inline:auto">Vamos montar seu plano?</h2>
+        <p class="lead mx-auto" style="margin-top:22px; text-align:center">Diagnóstico gratuito em até 48h, sem compromisso.</p>
+        <div class="row" style="justify-content:center; margin-top:36px"><a href="contact.html" class="btn btn--primary btn--lg">Solicitar diagnóstico <span class="arr">→</span></a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <a href="index.html" class="logo" style="margin-bottom:22px">
+          <svg class="logo-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M7 23.5a13 13 0 0 1 26 0z" fill="url(#hcMark)" /><line x1="4" y1="28.6" x2="36" y2="28.6" stroke="url(#hcMark)" stroke-width="2.6" stroke-linecap="round" /><line x1="13" y1="33.6" x2="27" y2="33.6" stroke="url(#hcMark)" stroke-width="2.6" stroke-linecap="round" opacity="0.5" /></svg>
+          <span class="logo-word"><b>Horizon</b> Collective</span>
+        </a>
+        <p class="footer-cta">Marcas pequenas, presença gigante.</p>
+      </div>
+      <div class="footer-col"><h4>Serviços</h4><ul><li><a href="services.html">Web Design</a></li><li><a href="services.html">Desenvolvimento</a></li><li><a href="services.html">SEO</a></li><li><a href="services.html">Tráfego Orgânico</a></li><li><a href="services.html">GEO · IA Search</a></li></ul></div>
+      <div class="footer-col"><h4>Estúdio</h4><ul><li><a href="about.html">Sobre nós</a></li><li><a href="work.html">Cases</a></li><li><a href="insights.html">Insights</a></li><li><a href="contact.html">Contato</a></li></ul></div>
+      <div class="footer-col"><h4>Contato</h4><ul><li><a href="mailto:ola@horizoncollective.studio">ola@horizoncollective.studio</a></li><li><a href="#">Instagram</a></li><li><a href="#">LinkedIn</a></li><li><a href="#">Behance</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Horizon Collective — Estúdio digital. São Paulo · Remoto.</span><span>Feito para quem cresce.</span></div>
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
