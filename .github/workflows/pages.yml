@@ -42,11 +42,29 @@ jobs:
       - name: Build
         run: npm run build:pages
 
+      - name: Normalize FTP server
+        id: ftp
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          raw="${{ secrets.FTP_SERVER }}"
+          server="${raw#*://}"
+          server="${server%%/*}"
+          server="${server%%:*}"
+
+          if [ -z "$server" ]; then
+            echo "FTP_SERVER secret is empty or invalid" >&2
+            exit 1
+          fi
+
+          echo "::add-mask::$server"
+          echo "server=$server" >> "$GITHUB_OUTPUT"
+
       - name: Deploy to Hostinger
         if: github.ref == 'refs/heads/main'
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
-          server: ${{ secrets.FTP_SERVER }}
+          server: ${{ steps.ftp.outputs.server }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
