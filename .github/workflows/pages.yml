@@ -39,8 +39,8 @@ jobs:
       - name: Visual tests
         run: npm run test:visual
 
-      - name: Build
-        run: npm run build:pages
+      - name: Build for Hostinger
+        run: npm run build
 
       - name: Normalize FTP server
         id: ftp
@@ -69,6 +69,10 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
           local-dir: ./dist/
+          server-dir: ./public_html/
+
+      - name: Build for GitHub Pages
+        run: npm run build:pages
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
