@@ -298,7 +298,7 @@ export function Nav({ lang, setLang }: NavProps) {
       {/* Mobile menu */}
       <div style={{
         overflow: "hidden",
-        maxHeight: menuOpen ? "500px" : "0",
+        maxHeight: menuOpen ? "550px" : "0",
         transition: "max-height 0.4s ease",
         background: "rgba(8,9,15,0.99)",
         borderTop: menuOpen ? "1px solid rgba(212,160,23,0.1)" : "none",
