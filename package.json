@@ -2,7 +2,7 @@
   "name": "horizon-collective",
   "version": "1.0.0",
   "private": true,
-  "description": "React + TypeScript website for Horizon Collective.",
+  "description": "React + TypeScript website for AUREON.",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -24,7 +24,7 @@
     "sass",
     "github-pages"
   ],
-  "author": "Horizon Collective",
+  "author": "AUREON",
   "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/RhuanFerreira-BBR/horizon-collective/issues"

@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a defect in the Horizon Collective site
+about: Report a defect in the AUREON site
 title: "bug: "
 labels: bug
 assignees: ""

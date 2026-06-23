@@ -1,13 +1,13 @@
-# Horizon Collective
+# AUREON
 
-React + TypeScript website for Horizon Collective, migrated from the static design in `Lumiris/`.
+React + TypeScript website rebuilt from the Runable design in `workspace-files/`.
 
 ## Stack
 
 - Vite + React + TypeScript
 - Sass/SCSS
-- React Router with PT-BR at `/` and EN at `/en`
-- Mocked blog data with a WordPress REST-ready service layer
+- React Router
+- Hardcoded cases, blog posts, legal pages, and marketing content
 - GitHub Pages deployment via GitHub Actions
 - Playwright smoke/visual checks
 
@@ -26,22 +26,25 @@ npm run build
 npm run test:visual
 ```
 
-`npm run test` runs lint, build and Playwright checks.
+`npm run test` runs lint, build, and Playwright checks.
 
-## WordPress Headless
+## Routes
 
-Blog content is currently mocked in `src/data/site.ts`. To connect WordPress REST later, set:
-
-```bash
-VITE_WORDPRESS_API_URL=https://your-wordpress-site.com
-```
-
-The adapter lives in `src/services/wordpress.ts`.
+- `/`
+- `/services`
+- `/cases`
+- `/cases/:id`
+- `/blog`
+- `/blog/:id`
+- `/about`
+- `/faq`
+- `/privacy`
+- `/terms`
 
 ## Deploy
 
-Pushes to `main` run `.github/workflows/pages.yml`, build with the GitHub Pages base path and deploy `dist/`.
+Pushes to `main` run `.github/workflows/pages.yml`, build with the GitHub Pages base path, and deploy `dist/`.
 
 ## Design Source
 
-`Lumiris/` is kept as the original static HTML/CSS/JS design reference and screenshot source.
+`workspace-files/` is kept as local Runable reference material and is ignored by Git.
