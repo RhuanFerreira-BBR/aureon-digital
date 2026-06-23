@@ -42,35 +42,39 @@ jobs:
       - name: Build for Hostinger
         run: npm run build
 
-      - name: Normalize FTP server
-        id: ftp
+      - name: Install SSH upload tool
         if: github.ref == 'refs/heads/main'
         shell: bash
         run: |
-          raw="${{ secrets.FTP_SERVER }}"
-          server="${raw#*://}"
-          server="${server%%/*}"
-          server="${server%%:*}"
+          sudo apt-get update
+          sudo apt-get install -y sshpass
 
-          if [ -z "$server" ]; then
-            echo "FTP_SERVER secret is empty or invalid" >&2
-            exit 1
-          fi
-
-          echo "::add-mask::$server"
-          echo "server=$server" >> "$GITHUB_OUTPUT"
-
-      - name: Deploy to Hostinger
+      - name: Trust SSH host
         if: github.ref == 'refs/heads/main'
-        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
-        with:
-          server: ${{ steps.ftp.outputs.server }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}
-          local-dir: ./dist/
-          server-dir: ./
-          state-name: .ftp-deploy-sync-state-aureon.json
+        shell: bash
+        env:
+          SSH_HOST: ${{ secrets.SSH_IP }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          set -euo pipefail
+          port="${SSH_PORT:-22}"
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "$port" -H "$SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Deploy to Hostinger over SSH
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          SSH_HOST: ${{ secrets.SSH_IP }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          set -euo pipefail
+          port="${SSH_PORT:-22}"
+          remote="${SSH_USER}@${SSH_HOST}"
+          sshpass -e ssh -p "$port" "$remote" 'pwd; ls -la | sed -n "1,20p"'
+          tar -C dist -czf - . | sshpass -e ssh -p "$port" "$remote" 'tar -xzf -'
 
       - name: Verify Hostinger deploy
         if: github.ref == 'refs/heads/main'
