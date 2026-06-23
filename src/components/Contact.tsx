@@ -64,7 +64,7 @@ export function Contact({ lang }: ContactProps) {
       form.message,
     ].join("\n");
 
-    window.location.href = `mailto:rhuankb@gmail.com?subject=${encodeURIComponent("AUREON project inquiry")}&body=${encodeURIComponent(body)}`;
+    window.location.href = `mailto:contact@aureondigital.co?subject=${encodeURIComponent("AUREON project inquiry")}&body=${encodeURIComponent(body)}`;
     setStatus("sent");
   };
 
@@ -109,7 +109,7 @@ export function Contact({ lang }: ContactProps) {
                 </div>
                 <div>
                   <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 2, letterSpacing: "0.06em", textTransform: "uppercase" }}>Email</div>
-                  <a href="mailto:rhuankb@gmail.com" style={{ fontSize: 15, color: "var(--text)", textDecoration: "none" }}>rhuankb@gmail.com</a>
+                  <a href="mailto:contact@aureondigital.co" style={{ fontSize: 15, color: "var(--text)", textDecoration: "none" }}>contact@aureondigital.co</a>
                 </div>
               </div>
 

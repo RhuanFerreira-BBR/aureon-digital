@@ -410,7 +410,7 @@ export function PostDetailPage({ lang, id }: { lang: "en" | "pt"; id: string }) 
                 </div>
                 <div>
                   <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, color: "var(--text)" }}>{post.author}</div>
-                  <div style={{ fontSize: 12, color: "var(--text-dim)" }}>aureon.io</div>
+                  <div style={{ fontSize: 12, color: "var(--text-dim)" }}>aureondigital.co</div>
                 </div>
               </div>
             </article>

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { BrandLogo } from "./BrandLogo";
 
 interface FooterProps {
   lang: "en" | "pt";
@@ -71,27 +72,20 @@ export function Footer({ lang }: FooterProps) {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 48, marginBottom: 48 }}>
           {/* Brand */}
           <div style={{ gridColumn: "span 1" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-              <div style={{
-                width: 32, height: 32, borderRadius: 4,
-                background: "linear-gradient(135deg, #D4A017, #F0C84A)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 14, color: "#08090F" }}>A</span>
-              </div>
-              <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 18, color: "var(--text)" }}>AUREON</span>
+            <div style={{ marginBottom: 16 }}>
+              <BrandLogo />
             </div>
             <p style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.6, maxWidth: 220, marginBottom: 20 }}>
               {tx.tagline}
             </p>
-            <a href="mailto:rhuankb@gmail.com"
+            <a href="mailto:contact@aureondigital.co"
               style={{ color: "var(--gold)", fontSize: 13, textDecoration: "none", fontWeight: 500 }}
               onMouseEnter={e => (e.target as HTMLElement).style.opacity = "0.7"}
               onMouseLeave={e => (e.target as HTMLElement).style.opacity = "1"}
             >
-              rhuankb@gmail.com
+              contact@aureondigital.co
             </a>
-            <p style={{ color: "var(--text-dim)", fontSize: 12, marginTop: 6 }}>Brasil 🇧🇷</p>
+            <p style={{ color: "var(--text-dim)", fontSize: 12, marginTop: 6 }}>Brasil</p>
           </div>
 
           {/* Services */}

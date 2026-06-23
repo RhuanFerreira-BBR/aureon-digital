@@ -345,7 +345,7 @@ export function ServicesPage({ lang }: ServicesPageProps) {
             {tx.ctaText}
           </p>
           <a
-            href="mailto:rhuankb@gmail.com"
+            href="mailto:contact@aureondigital.co"
             style={{
               display: "inline-block",
               padding: "14px 32px",
