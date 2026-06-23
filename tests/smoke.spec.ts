@@ -33,3 +33,39 @@ test('mobile menu opens and exposes navigation', async ({ page }) => {
   await expect(nav.getByRole('link', { name: 'Cases' }).last()).toBeVisible();
   await expect(nav.getByRole('link', { name: 'Blog' }).last()).toBeVisible();
 });
+
+for (const width of [390, 768, 991, 992]) {
+  test(`top navigation controls fit at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/');
+
+    if (width < 992) {
+      await expect(page.getByRole('button', { name: /abrir menu/i })).toBeVisible();
+      await expect(page.locator('.nav-cta')).toBeHidden();
+    } else {
+      await expect(page.getByRole('button', { name: /abrir menu/i })).toBeHidden();
+      await expect(page.locator('.nav-cta')).toBeVisible();
+    }
+
+    const offscreen = await page.evaluate(() => {
+      const viewportWidth = document.documentElement.clientWidth;
+      const topBar = document.querySelector('nav > div:first-child > div');
+      if (!topBar) return ['top bar not found'];
+
+      return [...topBar.querySelectorAll('a, button')]
+        .map((el) => {
+          const rect = el.getBoundingClientRect();
+          return {
+            text: (el.textContent || el.getAttribute('aria-label') || '').trim(),
+            left: rect.left,
+            right: rect.right,
+            width: rect.width,
+          };
+        })
+        .filter((item) => item.width > 0 && (item.left < -1 || item.right > viewportWidth + 1))
+        .map((item) => `${item.text}: ${Math.round(item.left)}-${Math.round(item.right)} / ${viewportWidth}`);
+    });
+
+    expect(offscreen).toEqual([]);
+  });
+}

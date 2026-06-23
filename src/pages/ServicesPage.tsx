@@ -1,3 +1,5 @@
+import { contactHref } from "../lib/contact";
+
 interface ServicesPageProps {
   lang: "en" | "pt";
 }
@@ -195,6 +197,7 @@ export function ServicesPage({ lang }: ServicesPageProps) {
         <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
           {tx.services.map((service) => (
             <div
+              className="service-card"
               key={service.id}
               id={service.id}
               style={{
@@ -207,7 +210,7 @@ export function ServicesPage({ lang }: ServicesPageProps) {
               }}
             >
               {/* Number */}
-              <div style={{
+              <div className="service-card-number" style={{
                 position: "absolute",
                 top: 32,
                 right: 40,
@@ -220,7 +223,7 @@ export function ServicesPage({ lang }: ServicesPageProps) {
                 {service.tag}
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "start" }}>
+              <div className="service-card-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "start" }}>
                 {/* Left */}
                 <div>
                   <span style={{
@@ -345,7 +348,7 @@ export function ServicesPage({ lang }: ServicesPageProps) {
             {tx.ctaText}
           </p>
           <a
-            href="mailto:contact@aureondigital.co"
+            href={contactHref(lang)}
             style={{
               display: "inline-block",
               padding: "14px 32px",

@@ -1,3 +1,5 @@
+import { contactEmail } from "../lib/contact";
+
 interface PrivacyPageProps {
   lang: "en" | "pt";
 }
@@ -34,7 +36,7 @@ const t = {
       },
       {
         title: "7. Your rights",
-        content: "Depending on your location, you may have the right to:\n• Access the personal data we hold about you\n• Request correction of inaccurate data\n• Request deletion of your data\n• Object to processing of your data\n• Data portability\n\nTo exercise any of these rights, contact us at contact@aureondigital.co.",
+        content: `Depending on your location, you may have the right to:\n• Access the personal data we hold about you\n• Request correction of inaccurate data\n• Request deletion of your data\n• Object to processing of your data\n• Data portability\n\nTo exercise any of these rights, contact us at ${contactEmail.en}.`,
       },
       {
         title: "8. LGPD (Brazil)",
@@ -42,7 +44,7 @@ const t = {
       },
       {
         title: "9. Contact",
-        content: "For any privacy-related questions or to exercise your rights, contact us at:\n\nEmail: contact@aureondigital.co\nAureon Digital Agency — Brazil",
+        content: `For any privacy-related questions or to exercise your rights, contact us at:\n\nEmail: ${contactEmail.en}\nAureon Digital Agency — Brazil`,
       },
     ],
   },
@@ -77,7 +79,7 @@ const t = {
       },
       {
         title: "7. Seus direitos",
-        content: "Dependendo da sua localização, você pode ter o direito de:\n• Acessar os dados pessoais que mantemos sobre você\n• Solicitar a correção de dados imprecisos\n• Solicitar a exclusão dos seus dados\n• Opor-se ao processamento dos seus dados\n• Portabilidade dos dados\n\nPara exercer qualquer um desses direitos, entre em contato conosco em contact@aureondigital.co.",
+        content: `Dependendo da sua localização, você pode ter o direito de:\n• Acessar os dados pessoais que mantemos sobre você\n• Solicitar a correção de dados imprecisos\n• Solicitar a exclusão dos seus dados\n• Opor-se ao processamento dos seus dados\n• Portabilidade dos dados\n\nPara exercer qualquer um desses direitos, entre em contato conosco em ${contactEmail.pt}.`,
       },
       {
         title: "8. LGPD (Brasil)",
@@ -85,7 +87,7 @@ const t = {
       },
       {
         title: "9. Contato",
-        content: "Para quaisquer dúvidas relacionadas à privacidade ou para exercer seus direitos, entre em contato:\n\nEmail: contact@aureondigital.co\nAureon Digital Agency — Brasil",
+        content: `Para quaisquer dúvidas relacionadas à privacidade ou para exercer seus direitos, entre em contato:\n\nEmail: ${contactEmail.pt}\nAureon Digital Agency — Brasil`,
       },
     ],
   },

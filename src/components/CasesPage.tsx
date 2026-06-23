@@ -140,14 +140,14 @@ export function CasesPage({ lang }: CasesPageProps) {
             <div className="reveal" style={{ paddingBottom: 8 }}>
               <p style={{ fontSize: 17, color: "var(--text-muted)", lineHeight: 1.7, marginBottom: 32 }}>{t[lang].sub}</p>
               {/* Stats */}
-              <div style={{ display: "flex", gap: 32 }}>
+              <div className="teaser-metrics" style={{ display: "flex", gap: 32 }}>
                 {[
                   { n: cases.length + "+", l: lang === "pt" ? "Cases publicados" : "Cases published" },
                   { n: "4", l: lang === "pt" ? "Setores" : "Industries" },
                   { n: "2025–26", l: lang === "pt" ? "Período" : "Period" },
                 ].map((stat, i) => (
-                  <div key={i}>
-                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 28, color: "var(--text)", lineHeight: 1 }}>{stat.n}</div>
+                  <div key={i} className="teaser-metric">
+                    <div className="teaser-metric-number" style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 28, color: "var(--text)", lineHeight: 1 }}>{stat.n}</div>
                     <div style={{ fontSize: 11, color: "var(--text-dim)", marginTop: 4, letterSpacing: "0.05em" }}>{stat.l}</div>
                   </div>
                 ))}
@@ -275,7 +275,7 @@ export function CasesPage({ lang }: CasesPageProps) {
           .case-list-item > div:first-child { height: 220px !important; width: 100% !important; }
           .case-list-item > div:last-child { flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; gap: 24px !important; }
         }
-        @media (max-width: 767px) {
+        @media (max-width: 991px) {
           section > div > div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
         }
       `}</style>

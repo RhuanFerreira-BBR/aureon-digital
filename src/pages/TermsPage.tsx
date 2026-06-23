@@ -1,3 +1,5 @@
+import { contactEmail } from "../lib/contact";
+
 interface TermsPageProps {
   lang: "en" | "pt";
 }
@@ -50,7 +52,7 @@ const t = {
       },
       {
         title: "11. Contact",
-        content: "Questions about these terms? Contact us at:\n\nEmail: contact@aureondigital.co\nAureon Digital Agency — Brazil",
+        content: `Questions about these terms? Contact us at:\n\nEmail: ${contactEmail.en}\nAureon Digital Agency — Brazil`,
       },
     ],
   },
@@ -101,7 +103,7 @@ const t = {
       },
       {
         title: "11. Contato",
-        content: "Dúvidas sobre estes termos? Entre em contato:\n\nEmail: contact@aureondigital.co\nAureon Digital Agency — Brasil",
+        content: `Dúvidas sobre estes termos? Entre em contato:\n\nEmail: ${contactEmail.pt}\nAureon Digital Agency — Brasil`,
       },
     ],
   },

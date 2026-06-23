@@ -104,14 +104,14 @@ export function BlogPage({ lang }: BlogPageProps) {
             </div>
             <div className="reveal" style={{ paddingBottom: 8 }}>
               <p style={{ fontSize: 17, color: "var(--text-muted)", lineHeight: 1.7, marginBottom: 32 }}>{t[lang].sub}</p>
-              <div style={{ display: "flex", gap: 32 }}>
+              <div className="teaser-metrics" style={{ display: "flex", gap: 32 }}>
                 {[
                   { n: posts.length + "", l: lang === "pt" ? "Artigos" : "Articles" },
                   { n: allTags.length + "", l: lang === "pt" ? "Categorias" : "Categories" },
                   { n: "2026", l: lang === "pt" ? "Desde" : "Since" },
                 ].map((stat, i) => (
-                  <div key={i}>
-                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 28, color: "var(--text)", lineHeight: 1 }}>{stat.n}</div>
+                  <div key={i} className="teaser-metric">
+                    <div className="teaser-metric-number" style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 28, color: "var(--text)", lineHeight: 1 }}>{stat.n}</div>
                     <div style={{ fontSize: 11, color: "var(--text-dim)", marginTop: 4 }}>{stat.l}</div>
                   </div>
                 ))}
@@ -201,7 +201,7 @@ export function BlogPage({ lang }: BlogPageProps) {
               {activeTag === t[lang].all ? t[lang].moreArticles : activeTag}
             </div>
           )}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 2 }}>
+          <div className="blog-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 2 }}>
             {filteredRest.map((post, i) => (
               <Link key={post.id} to={`/blog/${post.id}`} style={{ textDecoration: "none" }}>
                 <div
@@ -288,7 +288,7 @@ export function BlogPage({ lang }: BlogPageProps) {
       </section>
 
       <style>{`
-        @media (max-width: 767px) {
+        @media (max-width: 991px) {
           .featured-blog { grid-template-columns: 1fr !important; }
           .featured-blog > div:first-child { height: 260px !important; }
           section > div > div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }

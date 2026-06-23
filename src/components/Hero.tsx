@@ -226,7 +226,7 @@ export function Hero({ lang }: HeroProps) {
         </div>
 
         {/* Stats row */}
-        <div style={{
+        <div className="hero-metrics" style={{
           display: "flex", gap: 0, marginTop: 80, flexWrap: "wrap",
           animation: "fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.55s both",
         }}>
@@ -235,12 +235,12 @@ export function Hero({ lang }: HeroProps) {
             { n: t[lang].stat2n, l: t[lang].stat2l },
             { n: t[lang].stat3n, l: t[lang].stat3l },
           ].map((s, i) => (
-            <div key={i} style={{
+            <div key={i} className="hero-metric" style={{
               padding: "28px 40px",
               borderLeft: i === 0 ? "none" : "1px solid var(--border-dim)",
               ...(i === 0 ? { paddingLeft: 0 } : {}),
             }}>
-              <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(28px, 4vw, 44px)", color: "var(--gold)", lineHeight: 1 }}>{s.n}</div>
+              <div className="metric-number" style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(28px, 4vw, 44px)", color: "var(--gold)", lineHeight: 1 }}>{s.n}</div>
               <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4, letterSpacing: "0.02em" }}>{s.l}</div>
             </div>
           ))}

@@ -1,3 +1,5 @@
+import { contactHref } from "../lib/contact";
+
 interface AboutPageProps {
   lang: "en" | "pt";
 }
@@ -181,7 +183,7 @@ export function AboutPage({ lang }: AboutPageProps) {
         }}>
           {tx.valuesTitle}
         </h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: 16 }}>
+        <div className="about-values-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: 16 }}>
           {tx.values.map((v, i) => (
             <div key={i} style={{
               padding: "28px 28px",
@@ -241,7 +243,7 @@ export function AboutPage({ lang }: AboutPageProps) {
             {tx.ctaText}
           </p>
           <a
-            href="mailto:contact@aureondigital.co"
+            href={contactHref(lang)}
             style={{
               display: "inline-block",
               padding: "14px 32px",

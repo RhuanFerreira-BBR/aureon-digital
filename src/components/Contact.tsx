@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { contactEmail, contactHref } from "../lib/contact";
 
 interface ContactProps { lang: "en" | "pt"; }
 
@@ -37,6 +38,7 @@ export function Contact({ lang }: ContactProps) {
   const [form, setForm] = useState({ name: "", email: "", service: "", message: "" });
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
   const sectionRef = useRef<HTMLElement>(null);
+  const email = contactEmail[lang];
 
   useEffect(() => {
     const reveals = sectionRef.current?.querySelectorAll(".reveal") ?? [];
@@ -64,7 +66,7 @@ export function Contact({ lang }: ContactProps) {
       form.message,
     ].join("\n");
 
-    window.location.href = `mailto:contact@aureondigital.co?subject=${encodeURIComponent("AUREON project inquiry")}&body=${encodeURIComponent(body)}`;
+    window.location.href = contactHref(lang, "AUREON project inquiry", body);
     setStatus("sent");
   };
 
@@ -109,7 +111,7 @@ export function Contact({ lang }: ContactProps) {
                 </div>
                 <div>
                   <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 2, letterSpacing: "0.06em", textTransform: "uppercase" }}>Email</div>
-                  <a href="mailto:contact@aureondigital.co" style={{ fontSize: 15, color: "var(--text)", textDecoration: "none" }}>contact@aureondigital.co</a>
+                  <a href={contactHref(lang)} style={{ fontSize: 15, color: "var(--text)", textDecoration: "none" }}>{email}</a>
                 </div>
               </div>
 

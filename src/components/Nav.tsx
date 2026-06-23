@@ -347,12 +347,12 @@ export function Nav({ lang, setLang }: NavProps) {
       </div>
 
       <style>{`
-        @media (min-width: 768px) {
+        @media (min-width: 992px) {
           .desktop-nav { display: flex !important; }
           .nav-cta { display: inline-flex !important; }
           #mobile-menu-btn { display: none !important; }
         }
-        @media (max-width: 767px) {
+        @media (max-width: 991px) {
           .desktop-nav { display: none !important; }
           .nav-cta { display: none !important; }
           #mobile-menu-btn { display: flex !important; }

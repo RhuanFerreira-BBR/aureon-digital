@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { BrandLogo } from "./BrandLogo";
+import { contactEmail, contactHref } from "../lib/contact";
 
 interface FooterProps {
   lang: "en" | "pt";
@@ -58,6 +59,7 @@ const t = {
 
 export function Footer({ lang }: FooterProps) {
   const tx = t[lang];
+  const email = contactEmail[lang];
 
   const linkStyle = {
     color: "var(--text-muted)",
@@ -78,12 +80,12 @@ export function Footer({ lang }: FooterProps) {
             <p style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.6, maxWidth: 220, marginBottom: 20 }}>
               {tx.tagline}
             </p>
-            <a href="mailto:contact@aureondigital.co"
+            <a href={contactHref(lang)}
               style={{ color: "var(--gold)", fontSize: 13, textDecoration: "none", fontWeight: 500 }}
               onMouseEnter={e => (e.target as HTMLElement).style.opacity = "0.7"}
               onMouseLeave={e => (e.target as HTMLElement).style.opacity = "1"}
             >
-              contact@aureondigital.co
+              {email}
             </a>
             <p style={{ color: "var(--text-dim)", fontSize: 12, marginTop: 6 }}>Brasil</p>
           </div>

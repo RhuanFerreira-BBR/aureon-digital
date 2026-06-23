@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { contactHref } from "../lib/contact";
 
 interface FaqPageProps {
   lang: "en" | "pt";
@@ -317,7 +318,7 @@ export function FaqPage({ lang }: FaqPageProps) {
               : "Fale com a gente diretamente. Sem pressão de venda, só respostas diretas."}
           </p>
           <a
-            href="mailto:contact@aureondigital.co"
+            href={contactHref(lang)}
             style={{
               display: "inline-block",
               padding: "14px 32px",
