@@ -25,6 +25,13 @@ for (const route of routes) {
   });
 }
 
+test('serves favicon', async ({ request }) => {
+  const response = await request.get('/favicon.ico');
+
+  expect(response.ok()).toBeTruthy();
+  expect(response.headers()['content-type']).toContain('image');
+});
+
 test('mobile menu opens and exposes navigation', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
