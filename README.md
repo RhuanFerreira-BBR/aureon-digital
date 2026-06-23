@@ -43,7 +43,7 @@ npm run test:visual
 
 ## Deploy
 
-Pushes to `main` run `.github/workflows/pages.yml`, deploy the root-base build to Hostinger over SSH, check `https://aureondigital.co`, then build with the GitHub Pages base path and deploy `dist/`.
+Pushes to `main` run `.github/workflows/pages.yml`, deploy the root-base build to Hostinger `public_html/` over SSH, check `https://aureondigital.co`, then build with the GitHub Pages base path and deploy `dist/`.
 
 ## Design Source
 

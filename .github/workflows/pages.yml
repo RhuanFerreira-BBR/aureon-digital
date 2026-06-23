@@ -73,8 +73,8 @@ jobs:
           set -euo pipefail
           port="${SSH_PORT:-22}"
           remote="${SSH_USER}@${SSH_HOST}"
-          sshpass -e ssh -p "$port" "$remote" 'pwd; ls -la | sed -n "1,20p"'
-          tar -C dist -czf - . | sshpass -e ssh -p "$port" "$remote" 'tar -xzf -'
+          sshpass -e ssh -p "$port" "$remote" 'pwd; mkdir -p public_html; ls -la public_html | sed -n "1,20p"'
+          tar -C dist -czf - . | sshpass -e ssh -p "$port" "$remote" 'tar -xzf - -C public_html'
 
       - name: Verify Hostinger deploy
         if: github.ref == 'refs/heads/main'
