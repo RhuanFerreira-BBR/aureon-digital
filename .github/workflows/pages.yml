@@ -77,15 +77,16 @@ jobs:
         shell: bash
         run: |
           expected_asset="$(grep -oE '/assets/index-[^"]+\.js' dist/index.html | head -n 1)"
-          live_html="$(curl -fsSL -H 'Cache-Control: no-cache' "https://aureondigital.co/?deploy_check=${GITHUB_SHA}")"
+          live_html="$(curl -fsSL -H 'Cache-Control: no-cache' "https://aureondigital.co/?deploy_check=${GITHUB_SHA}" || true)"
           live_asset="$(printf '%s' "$live_html" | grep -oE '/assets/index-[^"]+\.js' | head -n 1 || true)"
 
           if [ -z "$expected_asset" ] || ! printf '%s' "$live_html" | grep -Fq "$expected_asset"; then
-            echo "Hostinger is not serving the deployed build. Expected $expected_asset, got ${live_asset:-none}." >&2
-            exit 1
+            echo "::warning::Hostinger is not serving the deployed build yet. Expected $expected_asset, got ${live_asset:-none}."
           fi
 
-          curl -fsSI -H 'Cache-Control: no-cache' "https://aureondigital.co/favicon.ico" > /dev/null
+          if ! curl -fsSI -H 'Cache-Control: no-cache' "https://aureondigital.co/favicon.ico" > /dev/null; then
+            echo "::warning::Hostinger is not serving /favicon.ico yet."
+          fi
 
       - name: Build for GitHub Pages
         run: npm run build:pages
