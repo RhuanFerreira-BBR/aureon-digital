@@ -73,8 +73,31 @@ jobs:
           set -euo pipefail
           port="${SSH_PORT:-22}"
           remote="${SSH_USER}@${SSH_HOST}"
-          sshpass -e ssh -p "$port" "$remote" 'pwd; mkdir -p public_html; ls -la public_html | sed -n "1,20p"'
-          tar -C dist -czf - . | sshpass -e ssh -p "$port" "$remote" 'tar -xzf - -C public_html'
+          target="$(
+            sshpass -e ssh -p "$port" "$remote" '
+              found=""
+              for file in $(find . -maxdepth 6 -name index.html -type f 2>/dev/null); do
+                if grep -q "index-sKcJUYPJ" "$file"; then
+                  found="${file%/index.html}"
+                  break
+                fi
+              done
+
+              if [ -n "$found" ]; then
+                printf "%s\n" "$found"
+              elif [ -d domains/aureondigital.co/public_html ]; then
+                printf "%s\n" "domains/aureondigital.co/public_html"
+              elif [ -d public_html ]; then
+                printf "%s\n" "public_html"
+              else
+                printf "%s\n" "."
+              fi
+            '
+          )"
+          printf 'Hostinger SSH deploy target: %s\n' "$target"
+          printf -v target_q '%q' "$target"
+          sshpass -e ssh -p "$port" "$remote" "mkdir -p $target_q; ls -la $target_q | sed -n '1,20p'"
+          tar -C dist -czf - . | sshpass -e ssh -p "$port" "$remote" "tar -xzf - -C $target_q"
 
       - name: Verify Hostinger deploy
         if: github.ref == 'refs/heads/main'
