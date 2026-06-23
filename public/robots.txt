@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://rhuanferreira-bbr.github.io/horizon-collective/sitemap.xml
+Sitemap: https://aureondigital.co/sitemap.xml
