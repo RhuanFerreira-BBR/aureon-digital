@@ -70,6 +70,7 @@ jobs:
           port: ${{ secrets.FTP_PORT }}
           local-dir: ./dist/
           server-dir: ./
+          state-name: .ftp-deploy-sync-state-aureon.json
 
       - name: Build for GitHub Pages
         run: npm run build:pages
