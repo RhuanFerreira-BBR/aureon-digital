@@ -39,6 +39,11 @@ test('mobile menu opens and exposes navigation', async ({ page }) => {
   const nav = page.locator('nav');
   await expect(nav.getByRole('link', { name: 'Cases' }).last()).toBeVisible();
   await expect(nav.getByRole('link', { name: 'Blog' }).last()).toBeVisible();
+
+  const cta = nav.getByRole('link', { name: /iniciar projeto/i });
+  await expect(cta).toBeVisible();
+  const ctaBox = await cta.boundingBox();
+  expect(ctaBox?.height).toBeGreaterThanOrEqual(44);
 });
 
 for (const width of [390, 768, 991, 992]) {
