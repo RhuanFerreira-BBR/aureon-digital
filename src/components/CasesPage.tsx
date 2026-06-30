@@ -140,7 +140,7 @@ export function CasesPage({ lang }: CasesPageProps) {
             <div className="reveal" style={{ paddingBottom: 8 }}>
               <p style={{ fontSize: 17, color: "var(--text-muted)", lineHeight: 1.7, marginBottom: 32 }}>{t[lang].sub}</p>
               {/* Stats */}
-              <div className="teaser-metrics" style={{ display: "flex", gap: 32 }}>
+              <div className="teaser-metrics case-page-metrics" style={{ display: "flex", gap: 32 }}>
                 {[
                   { n: cases.length + "+", l: lang === "pt" ? "Cases publicados" : "Cases published" },
                   { n: "4", l: lang === "pt" ? "Setores" : "Industries" },
@@ -350,13 +350,13 @@ export function CaseDetailPage({ lang, id }: { lang: "en" | "pt"; id: string }) 
       {/* Meta bar */}
       <div style={{ background: "var(--surface2)", borderBottom: "1px solid var(--border-dim)", borderTop: "1px solid var(--border-dim)" }}>
         <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 32px" }}>
-          <div style={{ display: "flex", gap: 0, overflowX: "auto" }}>
+          <div className="case-meta-list" style={{ display: "flex", gap: 0, overflowX: "auto" }}>
             {[
               { l: t[lang].industry, v: c.industry },
               { l: t[lang].year, v: c.year },
               { l: t[lang].services, v: c.services.join(" · ") },
             ].map((item, i) => (
-              <div key={i} style={{ padding: "20px 32px", borderRight: i < 2 ? "1px solid var(--border-dim)" : "none", flexShrink: 0 }}>
+              <div key={i} className="case-meta-item" style={{ padding: "20px 32px", borderRight: i < 2 ? "1px solid var(--border-dim)" : "none", flexShrink: 0 }}>
                 <div style={{ fontSize: 10, color: "var(--gold)", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 4, fontWeight: 700 }}>{item.l}</div>
                 <div style={{ fontSize: 13, color: "var(--text)", fontWeight: 500 }}>{item.v}</div>
               </div>

@@ -197,6 +197,42 @@ test('mobile menu opens and exposes navigation', async ({ page }) => {
   expect(ctaBox?.height).toBeGreaterThanOrEqual(44);
 });
 
+test('mobile contact fields stack and the hero cue does not overlap metrics', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+
+  const cue = page.locator('.hero-scroll-cue');
+  await expect(cue).toHaveCount(1);
+  await expect(cue).toBeHidden();
+
+  const nameBox = await page.getByLabel('Seu nome').boundingBox();
+  const emailBox = await page.getByLabel('E-mail').boundingBox();
+  expect(nameBox?.width).toBeGreaterThan(240);
+  expect(emailBox?.width).toBeGreaterThan(240);
+  expect(emailBox?.y).toBeGreaterThan((nameBox?.y ?? 0) + (nameBox?.height ?? 0));
+});
+
+test('hero cue stays hidden below the desktop breakpoint', async ({ page }) => {
+  for (const width of [521, 768, 991]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/');
+    await expect(page.locator('.hero-scroll-cue')).toBeHidden();
+  }
+});
+
+test('mobile case summary and metadata fit the viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/cases');
+
+  const periodBox = await page.getByText('2025–26', { exact: true }).boundingBox();
+  expect((periodBox?.x ?? 390) + (periodBox?.width ?? 0)).toBeLessThanOrEqual(366);
+
+  await page.goto('/cases/techbrasil-seo');
+  const metadata = page.locator('.case-meta-list');
+  await expect(metadata).toHaveCount(1);
+  expect(await metadata.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBeTruthy();
+});
+
 for (const width of [390, 768, 991, 992]) {
   test(`top navigation controls fit at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 });

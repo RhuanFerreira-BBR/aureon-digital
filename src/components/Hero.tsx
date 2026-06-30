@@ -247,7 +247,7 @@ export function Hero({ lang }: HeroProps) {
         </div>
 
         {/* Scroll cue */}
-        <div style={{ position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, animation: "fadeIn 1s ease 1.2s both" }}>
+        <div className="hero-scroll-cue" style={{ position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, animation: "fadeIn 1s ease 1.2s both" }}>
           <span style={{ fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-dim)" }}>{t[lang].scroll}</span>
           <div style={{
             width: 1, height: 40,
