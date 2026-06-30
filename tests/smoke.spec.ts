@@ -2,6 +2,8 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
 
+import { resolvePageMeta } from '../src/lib/seo';
+
 const routes = [
   '/',
   '/services',
@@ -26,6 +28,106 @@ for (const route of routes) {
     expect(screenshot.length).toBeGreaterThan(10_000);
   });
 }
+
+const seoCases = [
+  { route: '/', title: 'AUREON | Web Design, SEO e GEO', canonical: 'https://aureondigital.co/' },
+  { route: '/services', title: 'Serviços de Web Design, SEO e GEO | AUREON', canonical: 'https://aureondigital.co/services' },
+  {
+    route: '/blog/geo-vs-seo-2025',
+    title: 'GEO vs SEO: Why the next decade belongs to AI search | AUREON',
+    canonical: 'https://aureondigital.co/blog/geo-vs-seo-2025',
+  },
+];
+
+for (const seoCase of seoCases) {
+  test(`sets SEO metadata for ${seoCase.route}`, async ({ page }) => {
+    await page.goto(seoCase.route);
+    await expect(page).toHaveTitle(seoCase.title);
+    const description = await page.locator('meta[name="description"]').getAttribute('content');
+    expect(description?.length).toBeGreaterThanOrEqual(40);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index,follow');
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', seoCase.canonical);
+    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', seoCase.canonical);
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://aureondigital.co/aureon-logo.png');
+  });
+}
+
+for (const route of ['/services/', '/Services']) {
+  test(`normalizes SEO metadata for ${route}`, async ({ page }) => {
+    await page.goto(route);
+    await expect(page).toHaveTitle('Serviços de Web Design, SEO e GEO | AUREON');
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index,follow');
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://aureondigital.co/services');
+  });
+}
+
+test('normalizes SEO metadata canonical without leaving the site origin', () => {
+  const malicious = resolvePageMeta('//evil.example/path', 'pt');
+  expect(malicious.canonical).toBe('https://aureondigital.co/evil.example/path');
+  expect(malicious.robots).toBe('noindex,follow');
+
+  expect(() => resolvePageMeta('//', 'pt')).not.toThrow();
+  expect(new URL(resolvePageMeta('//', 'pt').canonical).origin).toBe('https://aureondigital.co');
+});
+
+test('normalizes trailing slashes for dynamic SEO metadata', () => {
+  const post = resolvePageMeta('/blog/geo-vs-seo-2025/', 'pt');
+  expect(post.type).toBe('article');
+  expect(post.robots).toBe('index,follow');
+  expect(post.canonical).toBe('https://aureondigital.co/blog/geo-vs-seo-2025');
+
+  const caseMeta = resolvePageMeta('/cases/techbrasil-seo/', 'pt');
+  expect(caseMeta.robots).toBe('noindex,follow');
+  expect(caseMeta.canonical).toBe('https://aureondigital.co/cases/techbrasil-seo');
+});
+
+test('normalizes mixed-case blog prefix in SEO metadata', () => {
+  const meta = resolvePageMeta('/Blog/geo-vs-seo-2025', 'pt');
+  expect(meta.title).toBe('GEO vs SEO: Why the next decade belongs to AI search | AUREON');
+  expect(meta.robots).toBe('index,follow');
+  expect(meta.type).toBe('article');
+  expect(meta.canonical).toBe('https://aureondigital.co/blog/geo-vs-seo-2025');
+});
+
+test('normalizes mixed-case case prefix in SEO metadata', () => {
+  const meta = resolvePageMeta('/Cases/techbrasil-seo', 'pt');
+  expect(meta.title).toBe('Case em preparação | AUREON');
+  expect(meta.robots).toBe('noindex,follow');
+  expect(meta.canonical).toBe('https://aureondigital.co/cases/techbrasil-seo');
+});
+
+test('keeps SEO metadata idempotent after changing language', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'EN', exact: true }).click();
+  await expect(page).toHaveTitle('AUREON | Web Design, SEO and GEO');
+
+  for (const selector of [
+    'meta[name="description"]',
+    'meta[name="robots"]',
+    'meta[property="og:title"]',
+    'meta[property="og:description"]',
+    'meta[property="og:type"]',
+    'meta[property="og:url"]',
+    'meta[property="og:site_name"]',
+    'meta[property="og:locale"]',
+    'meta[property="og:image"]',
+    'meta[property="og:image:alt"]',
+    'link[rel="canonical"]',
+  ]) {
+    await expect(page.locator(selector)).toHaveCount(1);
+  }
+});
+
+test('keeps fictional case details out of the index', async ({ page }) => {
+  await page.goto('/cases/techbrasil-seo');
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex,follow');
+});
+
+test('marks unknown routes as noindex', async ({ page }) => {
+  await page.goto('/missing-page');
+  await expect(page).toHaveTitle('Página não encontrada | AUREON');
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex,follow');
+});
 
 test('serves favicon', async ({ request }) => {
   const response = await request.get('/favicon.ico');

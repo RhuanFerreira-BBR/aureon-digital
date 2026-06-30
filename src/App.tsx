@@ -18,8 +18,9 @@ import { AboutPage } from "./pages/AboutPage";
 import { ServicesPage } from "./pages/ServicesPage";
 import { PrivacyPage } from "./pages/PrivacyPage";
 import { TermsPage } from "./pages/TermsPage";
+import { applyPageMeta, type SiteLang } from "./lib/seo";
 
-type Lang = "en" | "pt";
+type Lang = SiteLang;
 
 function HomePage({ lang }: { lang: Lang }) {
   return (
@@ -78,6 +79,10 @@ function CursorGlow() {
 export default function App() {
   const [lang, setLang] = useState<Lang>("pt");
   const { pathname, hash } = useLocation();
+
+  useEffect(() => {
+    applyPageMeta(pathname, lang);
+  }, [pathname, lang]);
 
   useEffect(() => {
     if (hash) {

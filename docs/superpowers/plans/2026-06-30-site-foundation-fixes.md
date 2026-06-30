@@ -104,6 +104,8 @@ git commit -m "fix: add hostinger spa fallback"
 Append to `tests/smoke.spec.ts`:
 
 ```ts
+import { resolvePageMeta } from '../src/lib/seo';
+
 const seoCases = [
   {
     route: '/',
@@ -117,7 +119,7 @@ const seoCases = [
   },
   {
     route: '/blog/geo-vs-seo-2025',
-    title: 'GEO vs SEO in 2025: what every business needs to know | AUREON',
+    title: 'GEO vs SEO: Why the next decade belongs to AI search | AUREON',
     canonical: 'https://aureondigital.co/blog/geo-vs-seo-2025',
   },
 ];
@@ -127,7 +129,8 @@ for (const seoCase of seoCases) {
     await page.goto(seoCase.route);
 
     await expect(page).toHaveTitle(seoCase.title);
-    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S{40,}/);
+    const description = await page.locator('meta[name="description"]').getAttribute('content');
+    expect(description?.length).toBeGreaterThanOrEqual(40);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index,follow');
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', seoCase.canonical);
     await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', seoCase.canonical);
@@ -147,6 +150,71 @@ test('marks unknown routes as noindex', async ({ page }) => {
   await expect(page).toHaveTitle('Página não encontrada | AUREON');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex,follow');
 });
+
+for (const route of ['/services/', '/Services']) {
+  test(`normalizes SEO metadata for ${route}`, async ({ page }) => {
+    await page.goto(route);
+    await expect(page).toHaveTitle('Serviços de Web Design, SEO e GEO | AUREON');
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index,follow');
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://aureondigital.co/services');
+  });
+}
+
+test('normalizes SEO metadata canonical without leaving the site origin', () => {
+  const malicious = resolvePageMeta('//evil.example/path', 'pt');
+  expect(malicious.canonical).toBe('https://aureondigital.co/evil.example/path');
+  expect(malicious.robots).toBe('noindex,follow');
+  expect(() => resolvePageMeta('//', 'pt')).not.toThrow();
+  expect(new URL(resolvePageMeta('//', 'pt').canonical).origin).toBe('https://aureondigital.co');
+});
+
+test('normalizes trailing slashes for dynamic SEO metadata', () => {
+  const post = resolvePageMeta('/blog/geo-vs-seo-2025/', 'pt');
+  expect(post.type).toBe('article');
+  expect(post.robots).toBe('index,follow');
+  expect(post.canonical).toBe('https://aureondigital.co/blog/geo-vs-seo-2025');
+
+  const caseMeta = resolvePageMeta('/cases/techbrasil-seo/', 'pt');
+  expect(caseMeta.robots).toBe('noindex,follow');
+  expect(caseMeta.canonical).toBe('https://aureondigital.co/cases/techbrasil-seo');
+});
+
+test('normalizes mixed-case blog prefix in SEO metadata', () => {
+  const meta = resolvePageMeta('/Blog/geo-vs-seo-2025', 'pt');
+  expect(meta.title).toBe('GEO vs SEO: Why the next decade belongs to AI search | AUREON');
+  expect(meta.robots).toBe('index,follow');
+  expect(meta.type).toBe('article');
+  expect(meta.canonical).toBe('https://aureondigital.co/blog/geo-vs-seo-2025');
+});
+
+test('normalizes mixed-case case prefix in SEO metadata', () => {
+  const meta = resolvePageMeta('/Cases/techbrasil-seo', 'pt');
+  expect(meta.title).toBe('Case em preparação | AUREON');
+  expect(meta.robots).toBe('noindex,follow');
+  expect(meta.canonical).toBe('https://aureondigital.co/cases/techbrasil-seo');
+});
+
+test('keeps SEO metadata idempotent after changing language', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'EN', exact: true }).click();
+  await expect(page).toHaveTitle('AUREON | Web Design, SEO and GEO');
+
+  for (const selector of [
+    'meta[name="description"]',
+    'meta[name="robots"]',
+    'meta[property="og:title"]',
+    'meta[property="og:description"]',
+    'meta[property="og:type"]',
+    'meta[property="og:url"]',
+    'meta[property="og:site_name"]',
+    'meta[property="og:locale"]',
+    'meta[property="og:image"]',
+    'meta[property="og:image:alt"]',
+    'link[rel="canonical"]',
+  ]) {
+    await expect(page.locator(selector)).toHaveCount(1);
+  }
+});
 ```
 
 - [ ] **Step 2: Run the SEO tests and verify RED**
@@ -157,7 +225,7 @@ Run:
 npx.cmd playwright test tests/smoke.spec.ts -g "SEO metadata|fictional case|unknown routes" --workers=1
 ```
 
-Expected: FAIL because every route still has the homepage title and canonical/robots/`og:url` tags are missing.
+Expected: FAIL because trailing/case variants and mixed-case dynamic prefixes are treated as unknown routes, while protocol-relative input can escape the site origin.
 
 - [ ] **Step 3: Implement the metadata resolver and DOM synchronization**
 
@@ -253,10 +321,14 @@ const pages: Record<SiteLang, Record<string, MetaCopy>> = {
   },
 };
 
+function normalizePathname(pathname: string) {
+  return `/${pathname.replace(/^\/+/, '')}`.replace(/\/+$/, '') || '/';
+}
+
 function completeMeta(copy: MetaCopy, pathname: string, lang: SiteLang, robots: PageMeta['robots'], type: PageMeta['type']): PageMeta {
   return {
     ...copy,
-    canonical: new URL(pathname, siteUrl).href,
+    canonical: `${siteUrl}${pathname}`,
     locale: lang === 'pt' ? 'pt_BR' : 'en_US',
     robots,
     type,
@@ -264,13 +336,14 @@ function completeMeta(copy: MetaCopy, pathname: string, lang: SiteLang, robots: 
 }
 
 export function resolvePageMeta(pathname: string, lang: SiteLang): PageMeta {
-  const postSlug = pathname.match(/^\/blog\/([^/]+)$/)?.[1];
+  const normalizedPathname = normalizePathname(pathname);
+  const postSlug = normalizedPathname.match(/^\/blog\/([^/]+)$/i)?.[1];
   if (postSlug) {
     const post = posts.find((item) => item.id === postSlug);
     if (post) {
       return completeMeta(
         { title: `${post.title} | AUREON`, description: post.excerpt },
-        pathname,
+        `/blog/${postSlug}`,
         lang,
         'index,follow',
         'article',
@@ -278,7 +351,8 @@ export function resolvePageMeta(pathname: string, lang: SiteLang): PageMeta {
     }
   }
 
-  if (/^\/cases\/[^/]+$/.test(pathname)) {
+  const caseSlug = normalizedPathname.match(/^\/cases\/([^/]+)$/i)?.[1];
+  if (caseSlug) {
     return completeMeta(
       {
         title: lang === 'pt' ? 'Case em preparação | AUREON' : 'Case in progress | AUREON',
@@ -286,15 +360,19 @@ export function resolvePageMeta(pathname: string, lang: SiteLang): PageMeta {
           ? 'Este case será substituído por um projeto real da AUREON.'
           : 'This case will be replaced with a real AUREON project.',
       },
-      pathname,
+      `/cases/${caseSlug}`,
       lang,
       'noindex,follow',
       'website',
     );
   }
 
-  const copy = pages[lang][pathname];
-  if (copy) return completeMeta(copy, pathname, lang, 'index,follow', 'website');
+  const canonicalPathname = Object.keys(pages[lang]).find(
+    (pagePathname) => pagePathname.toLowerCase() === normalizedPathname.toLowerCase(),
+  );
+  if (canonicalPathname) {
+    return completeMeta(pages[lang][canonicalPathname], canonicalPathname, lang, 'index,follow', 'website');
+  }
 
   return completeMeta(
     {
@@ -303,7 +381,7 @@ export function resolvePageMeta(pathname: string, lang: SiteLang): PageMeta {
         ? 'A página solicitada não foi encontrada.'
         : 'The requested page could not be found.',
     },
-    pathname,
+    normalizedPathname,
     lang,
     'noindex,follow',
     'website',
