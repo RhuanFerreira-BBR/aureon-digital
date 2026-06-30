@@ -1,3 +1,5 @@
+import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
 
 const routes = [
@@ -30,6 +32,15 @@ test('serves favicon', async ({ request }) => {
 
   expect(response.ok()).toBeTruthy();
   expect(response.headers()['content-type']).toContain('image');
+});
+
+test('Hostinger build includes the SPA fallback', async () => {
+  const fallback = await readFile(resolve(process.cwd(), 'dist', '.htaccess'), 'utf8');
+
+  expect(fallback).toContain('RewriteEngine On');
+  expect(fallback).toContain('RewriteCond %{REQUEST_FILENAME} !-f');
+  expect(fallback).toContain('RewriteCond %{REQUEST_FILENAME} !-d');
+  expect(fallback).toContain('RewriteRule . /index.html [L]');
 });
 
 test('mobile menu opens and exposes navigation', async ({ page }) => {
