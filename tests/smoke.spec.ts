@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
 
+import { contactHref } from '../src/lib/contact';
 import { resolvePageMeta } from '../src/lib/seo';
 
 const routes = [
@@ -127,6 +128,43 @@ test('marks unknown routes as noindex', async ({ page }) => {
   await page.goto('/missing-page');
   await expect(page).toHaveTitle('Página não encontrada | AUREON');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex,follow');
+});
+
+test('contact form describes the mailto handoff and has accessible labels', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByLabel('Seu nome')).toBeVisible();
+  await expect(page.getByLabel('E-mail')).toBeVisible();
+  await expect(page.getByLabel('Seu nome')).toHaveAttribute('autocomplete', 'name');
+  await expect(page.getByLabel('E-mail')).toHaveAttribute('autocomplete', 'email');
+  await expect(page.getByLabel('Serviço')).toBeVisible();
+  await expect(page.getByLabel('Mensagem')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Abrir e-mail' })).toBeVisible();
+  await expect(page.getByText('Localização', { exact: true })).toBeVisible();
+  await expect(page.getByText('Tempo de resposta', { exact: true })).toBeVisible();
+});
+
+test('contact href serializes RFC 6068 spaces and CRLF exactly', () => {
+  expect(contactHref('en', 'Project inquiry', 'Line one\nLine two')).toBe(
+    'mailto:contact@aureondigital.co?subject=Project%20inquiry&body=Line%20one%0D%0ALine%20two',
+  );
+});
+
+test('contact service selection uses the corresponding localized label after a language change', async ({ page }) => {
+  await page.goto('/');
+  await page.getByLabel('Serviço').selectOption({ label: 'Estratégia Completa' });
+  await page.getByRole('button', { name: 'EN', exact: true }).click();
+
+  const service = page.getByLabel('Service');
+  await expect(service).toHaveValue('3');
+  await expect(service.locator('option:checked')).toHaveText('Full Strategy');
+});
+
+test('Portuguese process chrome contains no English placeholders', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByText('Cronograma', { exact: true })).toBeAttached();
+  await expect(page.getByText('4–8 semanas', { exact: true })).toBeAttached();
+  await expect(page.getByText('Do briefing à publicação, normalmente', { exact: true })).toBeAttached();
+  await expect(page.getByText('Timeline', { exact: true })).toHaveCount(0);
 });
 
 test('serves favicon', async ({ request }) => {

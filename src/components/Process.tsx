@@ -7,6 +7,9 @@ const t = {
     label: "Process",
     title: "How we\nwork.",
     sub: "No surprises. No endless meetings. Just a clear path from brief to results.",
+    timeline: "Timeline",
+    duration: "4–8 weeks",
+    durationNote: "From brief to live, typically",
     steps: [
       { num: "01", title: "Discovery", desc: "We learn your business, market position, audience, and competitive landscape before proposing anything.", time: "Week 1" },
       { num: "02", title: "Strategy", desc: "A precise roadmap: what we build, why each element matters, and how it connects to your growth targets.", time: "Week 1–2" },
@@ -18,10 +21,13 @@ const t = {
     label: "Processo",
     title: "Como\ntrabalhamos.",
     sub: "Sem surpresas. Sem reuniões intermináveis. Apenas um caminho claro do briefing aos resultados.",
+    timeline: "Cronograma",
+    duration: "4–8 semanas",
+    durationNote: "Do briefing à publicação, normalmente",
     steps: [
       { num: "01", title: "Descoberta", desc: "Aprendemos seu negócio, posicionamento de mercado, público e cenário competitivo antes de propor qualquer coisa.", time: "Semana 1" },
       { num: "02", title: "Estratégia", desc: "Um roteiro preciso: o que construímos, por que cada elemento importa e como se conecta às suas metas de crescimento.", time: "Sem. 1–2" },
-      { num: "03", title: "Execução", desc: "Entregamos com total transparência. Atualizações regulares, sem scope creep, sem surpresas.", time: "Sem. 2–6" },
+      { num: "03", title: "Execução", desc: "Entregamos com total transparência. Atualizações regulares, sem aumento silencioso de escopo e sem surpresas.", time: "Sem. 2–6" },
       { num: "04", title: "Crescimento", desc: "Monitoramos, otimizamos e escalamos o que funciona. Seu benchmark é o nosso benchmark.", time: "Contínuo" },
     ],
   },
@@ -62,9 +68,9 @@ export function Process({ lang }: ProcessProps) {
 
             {/* Decorative */}
             <div className="reveal" style={{ marginTop: 48, padding: "24px 28px", background: "var(--surface)", border: "1px solid var(--border-dim)", borderRadius: 8, maxWidth: 340 }}>
-              <div style={{ fontSize: 12, color: "var(--gold)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 8, fontWeight: 600 }}>Timeline</div>
-              <div style={{ fontSize: 28, fontFamily: "var(--font-display)", fontWeight: 800, color: "var(--text)" }}>4–8 weeks</div>
-              <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4 }}>From brief to live, typically</div>
+              <div style={{ fontSize: 12, color: "var(--gold)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 8, fontWeight: 600 }}>{t[lang].timeline}</div>
+              <div style={{ fontSize: 28, fontFamily: "var(--font-display)", fontWeight: 800, color: "var(--text)" }}>{t[lang].duration}</div>
+              <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4 }}>{t[lang].durationNote}</div>
             </div>
           </div>
 

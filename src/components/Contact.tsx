@@ -13,10 +13,12 @@ const t = {
     service: "Service", servicePh: "Select a service",
     services: ["Web Design", "SEO", "GEO", "Full Strategy"],
     message: "Message", messagePh: "Tell us about your project...",
-    send: "Send message",
-    sending: "Sending...",
-    sent: "Message sent! We'll reply within 12 hours.",
-    or: "Or reach us directly",
+    submit: "Open email app",
+    location: "Location",
+    responseTime: "Response time",
+    responseValue: "Within 12 hours",
+    subject: "AUREON project inquiry",
+    notSelected: "Not selected",
   },
   pt: {
     label: "Contato",
@@ -27,16 +29,26 @@ const t = {
     service: "Serviço", servicePh: "Selecione um serviço",
     services: ["Web Design", "SEO", "GEO", "Estratégia Completa"],
     message: "Mensagem", messagePh: "Fale sobre o seu projeto...",
-    send: "Enviar mensagem",
-    sending: "Enviando...",
-    sent: "Mensagem enviada! Responderemos em até 12 horas.",
-    or: "Ou fale conosco diretamente",
+    submit: "Abrir e-mail",
+    location: "Localização",
+    responseTime: "Tempo de resposta",
+    responseValue: "Em até 12 horas",
+    subject: "Novo projeto AUREON",
+    notSelected: "Não selecionado",
   },
+};
+
+const labelStyle: React.CSSProperties = {
+  display: "block",
+  fontSize: 12,
+  color: "var(--text-muted)",
+  marginBottom: 8,
+  letterSpacing: "0.06em",
+  textTransform: "uppercase",
 };
 
 export function Contact({ lang }: ContactProps) {
   const [form, setForm] = useState({ name: "", email: "", service: "", message: "" });
-  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
   const sectionRef = useRef<HTMLElement>(null);
   const email = contactEmail[lang];
 
@@ -59,15 +71,15 @@ export function Contact({ lang }: ContactProps) {
     e.preventDefault();
 
     const body = [
-      `Name: ${form.name}`,
-      `Email: ${form.email}`,
-      `Service: ${form.service || "Not selected"}`,
+      `${t[lang].name}: ${form.name}`,
+      `${t[lang].email}: ${form.email}`,
+      `${t[lang].service}: ${form.service ? t[lang].services[Number(form.service)] : t[lang].notSelected}`,
       "",
+      `${t[lang].message}:`,
       form.message,
     ].join("\n");
 
-    window.location.href = contactHref(lang, "AUREON project inquiry", body);
-    setStatus("sent");
+    window.location.href = contactHref(lang, t[lang].subject, body);
   };
 
   const inputStyle = {
@@ -122,7 +134,7 @@ export function Contact({ lang }: ContactProps) {
                   </svg>
                 </div>
                 <div>
-                  <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 2, letterSpacing: "0.06em", textTransform: "uppercase" }}>Location</div>
+                  <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 2, letterSpacing: "0.06em", textTransform: "uppercase" }}>{t[lang].location}</div>
                   <span style={{ fontSize: 15, color: "var(--text)" }}>Brasil 🇧🇷</span>
                 </div>
               </div>
@@ -134,8 +146,8 @@ export function Contact({ lang }: ContactProps) {
                   </svg>
                 </div>
                 <div>
-                  <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 2, letterSpacing: "0.06em", textTransform: "uppercase" }}>Response time</div>
-                  <span style={{ fontSize: 15, color: "var(--text)" }}>≤ 12 hours</span>
+                  <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 2, letterSpacing: "0.06em", textTransform: "uppercase" }}>{t[lang].responseTime}</div>
+                  <span style={{ fontSize: 15, color: "var(--text)" }}>{t[lang].responseValue}</span>
                 </div>
               </div>
             </div>
@@ -143,22 +155,14 @@ export function Contact({ lang }: ContactProps) {
 
           {/* Right: Form */}
           <div className="reveal">
-            <div style={{ background: "var(--surface)", border: "1px solid var(--border-dim)", padding: "40px", borderRadius: 2 }}>
-              {status === "sent" ? (
-                <div style={{ textAlign: "center", padding: "40px 0" }}>
-                  <div style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(212,160,23,0.1)", border: "1px solid var(--border-bright)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px" }}>
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                  </div>
-                  <p style={{ fontSize: 18, color: "var(--text)", fontFamily: "var(--font-display)", fontWeight: 600 }}>{t[lang].sent}</p>
-                </div>
-              ) : (
+            <div className="contact-form-card" style={{ background: "var(--surface)", border: "1px solid var(--border-dim)", padding: "40px", borderRadius: 2 }}>
                 <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                  <div className="contact-identity-fields" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                     <div>
-                      <label style={{ display: "block", fontSize: 12, color: "var(--text-muted)", marginBottom: 8, letterSpacing: "0.06em", textTransform: "uppercase" }}>{t[lang].name}</label>
+                      <label htmlFor="contact-name" style={labelStyle}>{t[lang].name}</label>
                       <input
+                        id="contact-name"
+                        autoComplete="name"
                         style={inputStyle}
                         placeholder={t[lang].namePh}
                         value={form.name}
@@ -169,9 +173,11 @@ export function Contact({ lang }: ContactProps) {
                       />
                     </div>
                     <div>
-                      <label style={{ display: "block", fontSize: 12, color: "var(--text-muted)", marginBottom: 8, letterSpacing: "0.06em", textTransform: "uppercase" }}>{t[lang].email}</label>
+                      <label htmlFor="contact-email" style={labelStyle}>{t[lang].email}</label>
                       <input
+                        id="contact-email"
                         type="email"
+                        autoComplete="email"
                         style={inputStyle}
                         placeholder={t[lang].emailPh}
                         value={form.email}
@@ -184,8 +190,9 @@ export function Contact({ lang }: ContactProps) {
                   </div>
 
                   <div>
-                    <label style={{ display: "block", fontSize: 12, color: "var(--text-muted)", marginBottom: 8, letterSpacing: "0.06em", textTransform: "uppercase" }}>{t[lang].service}</label>
+                    <label htmlFor="contact-service" style={labelStyle}>{t[lang].service}</label>
                     <select
+                      id="contact-service"
                       style={{ ...inputStyle, cursor: "pointer" }}
                       value={form.service}
                       onChange={e => setForm(f => ({ ...f, service: e.target.value }))}
@@ -193,13 +200,14 @@ export function Contact({ lang }: ContactProps) {
                       onBlur={e => (e.target.style.borderColor = "var(--border-dim)")}
                     >
                       <option value="">{t[lang].servicePh}</option>
-                      {t[lang].services.map(s => <option key={s} value={s}>{s}</option>)}
+                      {t[lang].services.map((s, i) => <option key={s} value={i}>{s}</option>)}
                     </select>
                   </div>
 
                   <div>
-                    <label style={{ display: "block", fontSize: 12, color: "var(--text-muted)", marginBottom: 8, letterSpacing: "0.06em", textTransform: "uppercase" }}>{t[lang].message}</label>
+                    <label htmlFor="contact-message" style={labelStyle}>{t[lang].message}</label>
                     <textarea
+                      id="contact-message"
                       style={{ ...inputStyle, resize: "vertical", minHeight: 140 }}
                       placeholder={t[lang].messagePh}
                       value={form.message}
@@ -209,16 +217,13 @@ export function Contact({ lang }: ContactProps) {
                     />
                   </div>
 
-                  <button type="submit" className="btn-gold" style={{ width: "100%", justifyContent: "center", opacity: status === "sending" ? 0.7 : 1 }} disabled={status === "sending"}>
-                    {status === "sending" ? t[lang].sending : t[lang].send}
-                    {status !== "sending" && (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                      </svg>
-                    )}
+                  <button type="submit" className="btn-gold" style={{ width: "100%", justifyContent: "center" }}>
+                    {t[lang].submit}
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
                   </button>
                 </form>
-              )}
             </div>
           </div>
         </div>
