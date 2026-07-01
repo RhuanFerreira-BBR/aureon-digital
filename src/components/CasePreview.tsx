@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { cases, caseText } from "../lib/cases";
+import { cases, caseMediaUrl, caseText } from "../lib/cases";
 
 interface CasePreviewProps { lang: "en" | "pt"; }
 
@@ -65,7 +65,7 @@ export function CasePreview({ lang }: CasePreviewProps) {
                   height: i === 0 ? 460 : 300,
                 }}
               >
-                <img src={c.heroImage.src} alt={caseText(c.heroImage.alt, lang)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.3, transition: "opacity 0.4s, transform 0.6s cubic-bezier(0.16,1,0.3,1)" }} className="case-preview-img" />
+                <img src={caseMediaUrl(c.heroImage.src, import.meta.env.BASE_URL)} alt={caseText(c.heroImage.alt, lang)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.3, transition: "opacity 0.4s, transform 0.6s cubic-bezier(0.16,1,0.3,1)" }} className="case-preview-img" />
                 <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to top, rgba(8,9,15,0.95) 0%, ${c.accent}11 100%)` }} />
 
                 <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: 28 }}>

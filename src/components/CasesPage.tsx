@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { cases as portfolioCases, caseText, disciplineLabels } from "../lib/cases";
+import { cases as portfolioCases, caseMediaUrl, caseText, disciplineLabels } from "../lib/cases";
 
 interface CasesPageProps { lang: "en" | "pt"; }
 
@@ -179,7 +179,7 @@ export function CasesPage({ lang }: CasesPageProps) {
                 >
                   {/* Image */}
                   <div style={{ height: 180, borderRadius: 4, overflow: "hidden", position: "relative", flexShrink: 0 }}>
-                    <img src={c.heroImage.src} alt={caseText(c.heroImage.alt, lang)} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }}
+                    <img src={caseMediaUrl(c.heroImage.src, import.meta.env.BASE_URL)} alt={caseText(c.heroImage.alt, lang)} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }}
                       onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.06)")}
                       onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
                     />

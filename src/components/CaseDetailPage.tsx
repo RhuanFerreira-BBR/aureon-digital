@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactEventHandler } from "react";
 import { Link } from "react-router-dom";
 
-import { cases, caseText, disciplineLabels, type PortfolioCase } from "../lib/cases";
+import { cases, caseMediaUrl, caseText, disciplineLabels, type PortfolioCase } from "../lib/cases";
 
 type Lang = "pt" | "en";
 
@@ -78,7 +78,7 @@ const hideBrokenImage: ReactEventHandler<HTMLImageElement> = event => {
 };
 
 export function CaseDetailPage({ lang, id }: { lang: Lang; id: string }) {
-  const item = cases.find(portfolioCase => portfolioCase.id === id);
+  const item = cases.find(portfolioCase => portfolioCase.id.toLowerCase() === id.toLowerCase());
 
   if (!item) {
     return (
@@ -128,7 +128,7 @@ export function CaseDetailPage({ lang, id }: { lang: Lang; id: string }) {
         </dl>
 
         <div className="portfolio-case-image-frame portfolio-case-hero-image">
-          <img key={item.heroImage.src} src={item.heroImage.src} alt={caseText(item.heroImage.alt, lang)} onError={hideBrokenImage} />
+          <img key={item.heroImage.src} src={caseMediaUrl(item.heroImage.src, import.meta.env.BASE_URL)} alt={caseText(item.heroImage.alt, lang)} onError={hideBrokenImage} />
         </div>
 
         <div className="portfolio-case-body portfolio-case-container">
@@ -154,7 +154,7 @@ export function CaseDetailPage({ lang, id }: { lang: Lang; id: string }) {
             <div className="portfolio-case-gallery">
               {item.gallery.map(image => (
                 <div className="portfolio-case-image-frame" key={image.src}>
-                  <img src={image.src} alt={caseText(image.alt, lang)} onError={hideBrokenImage} />
+                  <img src={caseMediaUrl(image.src, import.meta.env.BASE_URL)} alt={caseText(image.alt, lang)} onError={hideBrokenImage} />
                 </div>
               ))}
             </div>

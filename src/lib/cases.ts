@@ -51,6 +51,9 @@ const text = (pt: string, en: string): LocalizedText => ({ pt, en });
 
 export const caseText = (value: LocalizedText, lang: CaseLang) => value[lang];
 
+export const caseMediaUrl = (src: string, baseUrl: string) =>
+  `${baseUrl.replace(/\/+$/, '')}/${src.replace(/^\/+/, '')}`;
+
 export const disciplineLabels: Record<string, LocalizedText> = {
   'Web Design': text('Web Design', 'Web Design'),
   Frontend: text('Desenvolvimento Frontend', 'Frontend Development'),

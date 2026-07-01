@@ -1,4 +1,7 @@
+/// <reference lib="dom" />
+
 import { posts } from './data';
+import { cases, caseText } from './cases';
 
 export type SiteLang = 'en' | 'pt';
 
@@ -12,6 +15,8 @@ export interface PageMeta extends MetaCopy {
   locale: 'pt_BR' | 'en_US';
   robots: 'index,follow' | 'noindex,follow';
   type: 'website' | 'article';
+  image: string;
+  imageAlt: string;
 }
 
 const siteUrl = 'https://aureondigital.co';
@@ -28,7 +33,7 @@ const pages: Record<SiteLang, Record<string, MetaCopy>> = {
     },
     '/cases': {
       title: 'Cases de Marketing Digital | AUREON',
-      description: 'Conheça projetos de Web Design, SEO e GEO apresentados pela AUREON e os resultados associados a cada estratégia.',
+      description: 'Conheça projetos reais de Web Design, SEO e GEO da AUREON, com escopo e impacto indicativo apresentados com transparência.',
     },
     '/blog': {
       title: 'Blog de Web Design, SEO e GEO | AUREON',
@@ -62,7 +67,7 @@ const pages: Record<SiteLang, Record<string, MetaCopy>> = {
     },
     '/cases': {
       title: 'Digital Marketing Cases | AUREON',
-      description: 'Explore Web Design, SEO, and GEO projects presented by AUREON and the results associated with each strategy.',
+      description: 'Explore real AUREON Web Design, SEO, and GEO projects, with scope and indicative impact presented transparently.',
     },
     '/blog': {
       title: 'Web Design, SEO and GEO Blog | AUREON',
@@ -97,6 +102,10 @@ function completeMeta(
   lang: SiteLang,
   robots: PageMeta['robots'],
   type: PageMeta['type'],
+  media: Pick<PageMeta, 'image' | 'imageAlt'> = {
+    image: `${siteUrl}/aureon-logo.png`,
+    imageAlt: 'AUREON Digital Agency',
+  },
 ): PageMeta {
   return {
     ...copy,
@@ -104,6 +113,7 @@ function completeMeta(
     locale: lang === 'pt' ? 'pt_BR' : 'en_US',
     robots,
     type,
+    ...media,
   };
 }
 
@@ -125,12 +135,32 @@ export function resolvePageMeta(pathname: string, lang: SiteLang): PageMeta {
 
   const caseSlug = normalizedPathname.match(/^\/cases\/([^/]+)$/i)?.[1];
   if (caseSlug) {
+    const item = cases.find(({ id }) => id.toLowerCase() === caseSlug.toLowerCase());
+    if (item) {
+      return completeMeta(
+        {
+          title: lang === 'pt'
+            ? `Case ${item.client}: ${item.platform} | AUREON`
+            : `${item.client} Case: ${item.platform} | AUREON`,
+          description: caseText(item.summary, lang),
+        },
+        `/cases/${item.id}`,
+        lang,
+        'index,follow',
+        'article',
+        {
+          image: `${siteUrl}${item.heroImage.src}`,
+          imageAlt: caseText(item.heroImage.alt, lang),
+        },
+      );
+    }
+
     return completeMeta(
       {
-        title: lang === 'pt' ? 'Case em preparação | AUREON' : 'Case in progress | AUREON',
+        title: lang === 'pt' ? 'Case não encontrado | AUREON' : 'Case not found | AUREON',
         description: lang === 'pt'
-          ? 'Este case será substituído por um projeto real da AUREON.'
-          : 'This case will be replaced with a real AUREON project.',
+          ? 'O case solicitado não foi encontrado.'
+          : 'The requested case could not be found.',
       },
       `/cases/${caseSlug}`,
       lang,
@@ -193,7 +223,12 @@ export function applyPageMeta(pathname: string, lang: SiteLang) {
   setMeta('property', 'og:url', meta.canonical);
   setMeta('property', 'og:site_name', 'AUREON');
   setMeta('property', 'og:locale', meta.locale);
-  setMeta('property', 'og:image', `${siteUrl}/aureon-logo.png`);
-  setMeta('property', 'og:image:alt', 'AUREON Digital Agency');
+  setMeta('property', 'og:image', meta.image);
+  setMeta('property', 'og:image:alt', meta.imageAlt);
+  setMeta('name', 'twitter:card', 'summary_large_image');
+  setMeta('name', 'twitter:title', meta.title);
+  setMeta('name', 'twitter:description', meta.description);
+  setMeta('name', 'twitter:image', meta.image);
+  setMeta('name', 'twitter:image:alt', meta.imageAlt);
   setCanonical(meta.canonical);
 }

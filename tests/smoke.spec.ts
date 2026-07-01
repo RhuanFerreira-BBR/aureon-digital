@@ -5,7 +5,7 @@ import { join, resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
 
 import { contactHref } from '../src/lib/contact';
-import { cases, caseText, disciplineLabels } from '../src/lib/cases';
+import { cases, caseMediaUrl, caseText, disciplineLabels } from '../src/lib/cases';
 import { resolvePageMeta } from '../src/lib/seo';
 
 const routes = [
@@ -67,6 +67,144 @@ test('portfolio case catalog is complete and internally valid', () => {
     expect(portfolioCase.disciplines.every((discipline) => disciplineLabels[discipline])).toBeTruthy();
     expect(portfolioCase.relatedCaseIds.every((relatedCaseId) => ids.has(relatedCaseId))).toBeTruthy();
   }
+});
+
+test('case media URLs support root and GitHub Pages bases', () => {
+  expect(caseMediaUrl('/cases/dove-global-aem/hero.jpg', '/')).toBe('/cases/dove-global-aem/hero.jpg');
+  expect(caseMediaUrl('/cases/dove-global-aem/hero.jpg', '/horizon-collective/')).toBe(
+    '/horizon-collective/cases/dove-global-aem/hero.jpg',
+  );
+});
+
+test('Pages subpath case media', async ({ page }) => {
+  test.skip(process.env.GITHUB_PAGES !== 'true', 'requires the GitHub Pages build');
+
+  await page.goto('/horizon-collective/cases/dove-global-aem');
+  const hero = page.locator('.portfolio-case-hero-image img');
+  await expect(hero).toHaveAttribute('src', '/horizon-collective/cases/dove-global-aem/hero.jpg');
+  expect(await hero.evaluate(image => image.naturalWidth)).toBeGreaterThan(0);
+
+  const heroResponse = await page.request.get(await hero.getAttribute('src') as string);
+  expect(heroResponse.status()).toBe(200);
+
+  const gallery = page.locator('.portfolio-case-gallery img');
+  await expect(gallery).toHaveAttribute('src', '/horizon-collective/cases/dove-global-aem/mobile.jpg');
+  expect(await gallery.evaluate(image => image.naturalWidth)).toBeGreaterThan(0);
+
+  const galleryResponse = await page.request.get(await gallery.getAttribute('src') as string);
+  expect(galleryResponse.status()).toBe(200);
+
+  await page.goto('/horizon-collective/');
+  const preview = page.locator('[data-case-preview]').filter({ hasText: 'Dove' }).locator('img');
+  await expect(preview).toHaveAttribute('src', '/horizon-collective/cases/dove-global-aem/hero.jpg');
+  expect(await preview.evaluate(image => image.naturalWidth)).toBeGreaterThan(0);
+
+  await page.goto('/horizon-collective/cases');
+  const card = page.locator('[data-case-card]').filter({ hasText: 'Dove' }).locator('img');
+  await expect(card).toHaveAttribute('src', '/horizon-collective/cases/dove-global-aem/hero.jpg');
+  expect(await card.evaluate(image => image.naturalWidth)).toBeGreaterThan(0);
+});
+
+test('Pages workflow tests subpath media after building its dist', async () => {
+  const workflow = await readFile(resolve(process.cwd(), '.github', 'workflows', 'pages.yml'), 'utf8');
+  const build = workflow.indexOf('- name: Build for GitHub Pages');
+  const pagesTest = workflow.indexOf('- name: Test GitHub Pages subpath');
+
+  expect(build).toBeGreaterThan(-1);
+  expect(pagesTest).toBeGreaterThan(build);
+  expect(workflow.indexOf('npx playwright test tests/smoke.spec.ts -g "Pages subpath case media" --project=chromium-desktop --workers=1')).toBeGreaterThan(pagesTest);
+});
+
+test('real case metadata is indexable and uses local social media', async ({ page }) => {
+  const meta = resolvePageMeta('/cases/dove-global-aem', 'pt');
+
+  expect(meta.title).toContain('Dove');
+  expect(meta.description).toContain('AEM');
+  expect(meta.canonical).toBe('https://aureondigital.co/cases/dove-global-aem');
+  expect(meta.robots).toBe('index,follow');
+  expect(meta.image).toBe('https://aureondigital.co/cases/dove-global-aem/hero.jpg');
+  expect(meta.imageAlt).toBe('Página inicial do projeto Dove');
+
+  await page.goto('/cases/dove-global-aem');
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', meta.image);
+  await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute('content', meta.imageAlt);
+  await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', meta.image);
+  await expect(page.locator('meta[name="twitter:image:alt"]')).toHaveAttribute('content', meta.imageAlt);
+});
+
+test('localizes case social image alt text', () => {
+  expect(resolvePageMeta('/cases/dove-global-aem', 'pt').imageAlt).toBe('Página inicial do projeto Dove');
+  expect(resolvePageMeta('/cases/dove-global-aem', 'en').imageAlt).toBe('Dove project homepage');
+});
+
+test('every real case resolves unique indexable metadata', () => {
+  const metadata = cases.map(({ id }) => resolvePageMeta(`/cases/${id.toUpperCase()}`, 'en'));
+
+  expect(new Set(metadata.map(({ title }) => title)).size).toBe(14);
+  for (const [index, meta] of metadata.entries()) {
+    expect(meta.robots).toBe('index,follow');
+    expect(meta.canonical).toBe(`https://aureondigital.co/cases/${cases[index].id}`);
+  }
+});
+
+test('uppercase real case route renders the canonical Dove case', async ({ page }) => {
+  await page.goto('/cases/DOVE-GLOBAL-AEM');
+
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('beleza real');
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index,follow');
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    'https://aureondigital.co/cases/dove-global-aem',
+  );
+});
+
+test('build emits static Portuguese social metadata for every real case', async () => {
+  const rootHtml = await readFile(resolve(process.cwd(), 'dist', 'index.html'), 'utf8');
+  const rootAssets = [...rootHtml.matchAll(/(?:src|href)="([^"]*\/assets\/[^"]+)"/g)].map(([, asset]) => asset);
+
+  expect(rootAssets).toHaveLength(2);
+  for (const item of cases) {
+    const meta = resolvePageMeta(`/cases/${item.id}`, 'pt');
+    const html = await readFile(resolve(process.cwd(), 'dist', 'cases', item.id, 'index.html'), 'utf8');
+
+    expect(html).toContain('<html lang="pt-BR">');
+    expect(html).toContain(`<title>${meta.title}</title>`);
+    expect(html).toContain(`<meta name="description" content="${meta.description}"`);
+    expect(html).toContain(`<meta name="robots" content="${meta.robots}"`);
+    expect(html).toContain(`<link rel="canonical" href="${meta.canonical}"`);
+    expect(html).toContain(`<meta property="og:title" content="${meta.title}"`);
+    expect(html).toContain(`<meta property="og:description" content="${meta.description}"`);
+    expect(html).toContain(`<meta property="og:type" content="${meta.type}"`);
+    expect(html).toContain(`<meta property="og:url" content="${meta.canonical}"`);
+    expect(html).toContain(`<meta property="og:locale" content="${meta.locale}"`);
+    expect(html).toContain(`<meta property="og:image" content="${meta.image}"`);
+    expect(html).toContain(`<meta property="og:image:alt" content="${meta.imageAlt}"`);
+    expect(html).toContain('<meta name="twitter:card" content="summary_large_image"');
+    expect(html).toContain(`<meta name="twitter:title" content="${meta.title}"`);
+    expect(html).toContain(`<meta name="twitter:description" content="${meta.description}"`);
+    expect(html).toContain(`<meta name="twitter:image" content="${meta.image}"`);
+    expect(html).toContain(`<meta name="twitter:image:alt" content="${meta.imageAlt}"`);
+    for (const asset of rootAssets) expect(html).toContain(asset);
+  }
+});
+
+test('root build ships default Twitter metadata without JavaScript', async () => {
+  const html = await readFile(resolve(process.cwd(), 'dist', 'index.html'), 'utf8');
+
+  expect(html).toContain('<meta name="twitter:card" content="summary_large_image"');
+  expect(html).toContain('<meta name="twitter:title" content="AUREON | Web Design, SEO e GEO"');
+  expect(html).toContain('<meta name="twitter:description" content="Agência digital de Web Design, SEO e GEO');
+  expect(html).toContain('<meta name="twitter:image" content="https://aureondigital.co/aureon-logo.png"');
+  expect(html).toContain('<meta name="twitter:image:alt" content="AUREON Digital Agency"');
+});
+
+test('sitemap case slugs exactly match the portfolio catalog', async () => {
+  const sitemap = await readFile(resolve(process.cwd(), 'public', 'sitemap.xml'), 'utf8');
+  const slugs = [...sitemap.matchAll(/<loc>https:\/\/aureondigital\.co\/cases\/([^<]+)<\/loc>/g)]
+    .map(([, slug]) => slug);
+
+  expect(slugs).toHaveLength(14);
+  expect(slugs).toEqual(cases.map(({ id }) => id));
 });
 
 test('homepage shows the three configured portfolio features', async ({ page }) => {
@@ -236,9 +374,9 @@ test('normalizes mixed-case blog prefix in SEO metadata', () => {
   expect(meta.canonical).toBe('https://aureondigital.co/blog/geo-vs-seo-2025');
 });
 
-test('normalizes mixed-case case prefix in SEO metadata', () => {
+test('normalizes mixed-case unknown routes in SEO metadata', () => {
   const meta = resolvePageMeta('/Cases/techbrasil-seo', 'pt');
-  expect(meta.title).toBe('Case em preparação | AUREON');
+  expect(meta.title).toBe('Case não encontrado | AUREON');
   expect(meta.robots).toBe('noindex,follow');
   expect(meta.canonical).toBe('https://aureondigital.co/cases/techbrasil-seo');
 });
@@ -259,10 +397,22 @@ test('keeps SEO metadata idempotent after changing language', async ({ page }) =
     'meta[property="og:locale"]',
     'meta[property="og:image"]',
     'meta[property="og:image:alt"]',
+    'meta[name="twitter:card"]',
+    'meta[name="twitter:title"]',
+    'meta[name="twitter:description"]',
+    'meta[name="twitter:image"]',
+    'meta[name="twitter:image:alt"]',
     'link[rel="canonical"]',
   ]) {
     await expect(page.locator(selector)).toHaveCount(1);
   }
+
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
+  await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute('content', 'AUREON | Web Design, SEO and GEO');
+  await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute(
+    'content',
+    'A digital agency for businesses that want to be found, earn trust, and convert more through Web Design, SEO, and GEO.',
+  );
 });
 
 test('keeps fictional case details out of the index', async ({ page }) => {
