@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:pages": "tsc -b && vite build --base=/horizon-collective/",
+    "capture:cases": "node scripts/capture-case-assets.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
     "test": "npm-run-all2 lint test:visual",

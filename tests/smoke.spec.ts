@@ -1,5 +1,7 @@
+import { createHash } from 'node:crypto';
+import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
 
 import { contactHref } from '../src/lib/contact';
@@ -65,6 +67,37 @@ test('portfolio case catalog is complete and internally valid', () => {
     expect(portfolioCase.disciplines.every((discipline) => disciplineLabels[discipline])).toBeTruthy();
     expect(portfolioCase.relatedCaseIds.every((relatedCaseId) => ids.has(relatedCaseId))).toBeTruthy();
   }
+});
+
+test('portfolio case media is stored locally', async ({ page }) => {
+  const images = cases.flatMap(({ heroImage, gallery }) => [heroImage, ...gallery]);
+  const hashes = new Set<string>();
+
+  expect(images).toHaveLength(28);
+  await page.goto('/');
+
+  for (const image of images) {
+    expect(image.src).toMatch(/^\/cases\/.+\.(jpg|png|webp|svg)$/);
+    const path = join(process.cwd(), 'public', image.src.slice(1));
+    expect(existsSync(path)).toBeTruthy();
+
+    const contents = await readFile(path);
+    expect(contents.byteLength).toBeGreaterThan(10_000);
+    hashes.add(createHash('sha256').update(contents).digest('hex'));
+
+    const dimensions = await page.evaluate(async (src) => {
+      const image = new Image();
+      image.src = src;
+      await image.decode();
+      return { width: image.naturalWidth, height: image.naturalHeight };
+    }, image.src);
+    expect(image.src.endsWith('/hero.jpg') ? [[1440, 900], [1425, 891]] : [[390, 844], [375, 812]]).toContainEqual([
+      dimensions.width,
+      dimensions.height,
+    ]);
+  }
+
+  expect(hashes.size).toBe(28);
 });
 
 for (const seoCase of seoCases) {
