@@ -124,7 +124,7 @@ Each entry contains:
 - stable identifiers: `id`, `client`, `sourceUrl`, `platform`, `group`, `featured`;
 - presentation: `accent`, `heroImage`, `gallery`, `relatedCaseIds`;
 - classification: `disciplines`, `market`, `scope`, `supportModel`;
-- localized content: `title`, `summary`, `challenge`, `strategy`, `execution`, `highlights`, `services`, CTA labels where required;
+- localized content: `title`, `summary`, `challenge`, `strategy`, `execution`, and `highlights`; discipline/service identifiers are localized through one shared label map;
 - metrics: localized label/value/supporting text plus `evidence`;
 - optional module flags from the information architecture above.
 
