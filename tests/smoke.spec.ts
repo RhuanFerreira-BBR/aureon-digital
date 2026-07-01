@@ -12,7 +12,7 @@ const routes = [
   '/',
   '/services',
   '/cases',
-  '/cases/techbrasil-seo',
+  '/cases/dove-global-aem',
   '/blog',
   '/blog/geo-vs-seo-2025',
   '/about',
@@ -99,6 +99,60 @@ test('cases index filters by platform and discipline and recovers from empty res
   await page.getByRole('button', { name: 'Headless Commerce', exact: true }).click();
   await expect(page.locator('[data-case-card]')).toHaveCount(1);
   await expect(resultCount).toHaveText('1 projeto');
+});
+
+test('AEM case discloses attribution and estimated impact', async ({ page }) => {
+  await page.goto('/cases/dove-global-aem');
+
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('beleza real');
+  await expect(page.getByText('Trabalho realizado em equipe via agência parceira para a Unilever.', { exact: true })).toBeVisible();
+  await expect(page.getByText('Impacto indicativo — estimativas não auditadas', { exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Visitar website' })).toHaveAttribute('href', 'https://www.dove.com/us/en/home.html');
+  await expect(page.getByRole('link', { name: 'Visitar website' })).toHaveAttribute('target', '_blank');
+  await expect(page.getByRole('link', { name: 'Visitar website' })).toHaveAttribute('rel', 'noopener noreferrer');
+  await expect(page.locator('.portfolio-case-attribution')).toHaveCSS('color', 'rgb(138, 145, 184)');
+  await expect(page.locator('.portfolio-case-impact-grid small').first()).toHaveCSS('color', 'rgb(138, 145, 184)');
+});
+
+test('regional brand cases cross-link Degree and Rexona', async ({ page }) => {
+  await page.goto('/cases/degree-us-aem');
+
+  await expect(page.getByRole('link', { name: /Rexona Brasil/ })).toHaveAttribute('href', '/cases/rexona-brasil-aem');
+});
+
+test('case modules expose project-specific proof', async ({ page }) => {
+  await page.goto('/cases/mini-finance-matcher-react');
+  await expect(page.locator('[data-case-module="decisionTool"]')).toBeVisible();
+
+  await page.goto('/cases/nuro-club-wordpress');
+  await expect(page.locator('[data-case-module="gatedExperience"]')).toBeVisible();
+});
+
+test('case detail follows the language selector', async ({ page }) => {
+  await page.goto('/cases/arctic-fox-headless-commerce');
+  await page.getByRole('button', { name: 'EN', exact: true }).click();
+
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Headless commerce');
+  await expect(page.getByText('Indicative impact — unaudited estimates', { exact: true })).toBeVisible();
+});
+
+test('case detail hides a broken hero image while preserving its frame', async ({ page }) => {
+  await page.route('**/cases/dove-global-aem/hero.jpg', route => route.abort());
+  await page.goto('/cases/dove-global-aem');
+
+  const frame = page.locator('.portfolio-case-hero-image');
+  const image = frame.locator('img');
+  await expect(image).toHaveJSProperty('hidden', true);
+  await expect(image).toHaveCSS('display', 'none');
+  await expect(frame).toBeVisible();
+  expect((await frame.boundingBox())?.height).toBeGreaterThanOrEqual(240);
+
+  await page.locator('.portfolio-case-next').click();
+  await expect(page).toHaveURL(/\/cases\/seda-brasil-aem$/);
+  await expect(image).toHaveAttribute('src', '/cases/seda-brasil-aem/hero.jpg');
+  await expect(image).toHaveJSProperty('hidden', false);
+  await expect(image).toHaveCSS('display', 'block');
+  expect(await image.evaluate(element => element.naturalWidth)).toBeGreaterThan(0);
 });
 
 test('portfolio case media is stored locally', async ({ page }) => {
@@ -320,8 +374,8 @@ test('mobile case summary and metadata fit the viewport', async ({ page }) => {
   const reachBox = await reachMetric.boundingBox();
   expect((reachBox?.x ?? 390) + (reachBox?.width ?? 0)).toBeLessThanOrEqual(366);
 
-  await page.goto('/cases/techbrasil-seo');
-  const metadata = page.locator('.case-meta-list');
+  await page.goto('/cases/dove-global-aem');
+  const metadata = page.locator('.portfolio-case-meta');
   await expect(metadata).toHaveCount(1);
   expect(await metadata.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBeTruthy();
 });
