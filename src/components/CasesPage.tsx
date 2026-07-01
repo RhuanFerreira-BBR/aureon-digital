@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { cases } from "../lib/data";
+import { cases as legacyCases } from "../lib/data";
+import { cases as portfolioCases, caseText, disciplineLabels } from "../lib/cases";
 
 interface CasesPageProps { lang: "en" | "pt"; }
 
@@ -8,9 +9,15 @@ const t = {
   en: {
     breadcrumb: "Home",
     label: "Case Studies",
-    title: "Work that\nmoves numbers.",
-    sub: "Real results, real clients. Every case here is built on data, not vanity metrics.",
+    title: "Selected digital\nwork.",
+    sub: "Real-world work across platforms, markets, and disciplines, presented without unverified outcome claims.",
     all: "All",
+    platforms: "Platforms",
+    disciplines: "Disciplines",
+    empty: "No projects match these filters.",
+    clear: "Clear filters",
+    project: "project",
+    projects: "projects",
     back: "← Back to Cases",
     services: "Services",
     industry: "Industry",
@@ -30,9 +37,15 @@ const t = {
   pt: {
     breadcrumb: "Início",
     label: "Cases",
-    title: "Trabalho que\nmove números.",
-    sub: "Resultados reais, clientes reais. Cada case aqui é construído com dados, não métricas de vaidade.",
+    title: "Trabalho digital\nselecionado.",
+    sub: "Trabalho real em diferentes plataformas, mercados e disciplinas, com foco no que foi entregue.",
     all: "Todos",
+    platforms: "Plataformas",
+    disciplines: "Disciplinas",
+    empty: "Nenhum projeto combina com esses filtros.",
+    clear: "Limpar filtros",
+    project: "projeto",
+    projects: "projetos",
     back: "← Voltar para Cases",
     services: "Serviços",
     industry: "Setor",
@@ -51,42 +64,17 @@ const t = {
   },
 };
 
-const tagColors: Record<string, string> = {
-  SEO: "#4A90E2",
-  "Web Design": "#E24A7A",
-  GEO: "#4AE2A0",
-  "Full Stack": "#E2A44A",
-};
-
-function FilterBar({ tags, active, setActive, all }: { tags: string[]; active: string; setActive: (t: string) => void; all: string }) {
-  return (
-    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-      {[all, ...tags].map(tag => (
-        <button
-          key={tag}
-          onClick={() => setActive(tag)}
-          style={{
-            padding: "6px 16px", borderRadius: 100,
-            border: active === tag ? "1px solid var(--gold)" : "1px solid rgba(212,160,23,0.18)",
-            background: active === tag ? "rgba(212,160,23,0.12)" : "transparent",
-            color: active === tag ? "var(--gold)" : "var(--text-muted)",
-            fontSize: 11, fontWeight: 600, letterSpacing: "0.1em",
-            textTransform: "uppercase", cursor: "pointer",
-            transition: "all 0.2s", fontFamily: "var(--font-display)",
-          }}
-        >
-          {tag}
-        </button>
-      ))}
-    </div>
-  );
-}
+const platforms = ["AEM", "React", "Shopify", "WordPress", "Headless Commerce"];
+const disciplines = ["Web Design", "Frontend", "SEO", "GEO", "Performance", "Commerce", "Support"];
 
 export function CasesPage({ lang }: CasesPageProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const [activeFilter, setActiveFilter] = useState(t[lang].all);
-  const allTags = [...new Set(cases.map(c => c.tag))];
-  const filtered = activeFilter === t[lang].all ? cases : cases.filter(c => c.tag === activeFilter);
+  const [platform, setPlatform] = useState("All");
+  const [discipline, setDiscipline] = useState("All");
+  const filtered = portfolioCases.filter(item =>
+    (platform === "All" || item.platform === platform) &&
+    (discipline === "All" || item.disciplines.includes(discipline))
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -142,9 +130,9 @@ export function CasesPage({ lang }: CasesPageProps) {
               {/* Stats */}
               <div className="teaser-metrics case-page-metrics" style={{ display: "flex", gap: 32 }}>
                 {[
-                  { n: cases.length + "+", l: lang === "pt" ? "Cases publicados" : "Cases published" },
-                  { n: "4", l: lang === "pt" ? "Setores" : "Industries" },
-                  { n: "2025–26", l: lang === "pt" ? "Período" : "Period" },
+                  { n: "14", l: lang === "pt" ? "Projetos" : "Projects" },
+                  { n: "5", l: lang === "pt" ? "Plataformas" : "Platforms" },
+                  { n: "Global + local", l: lang === "pt" ? "Alcance" : "Reach" },
                 ].map((stat, i) => (
                   <div key={i} className="teaser-metric">
                     <div className="teaser-metric-number" style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 28, color: "var(--text)", lineHeight: 1 }}>{stat.n}</div>
@@ -161,18 +149,34 @@ export function CasesPage({ lang }: CasesPageProps) {
       <section style={{ padding: "60px 0 100px" }}>
         <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 32px" }}>
 
-          {/* Filter */}
-          <div className="reveal" style={{ marginBottom: 48, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
-            <FilterBar tags={allTags} active={activeFilter} setActive={setActiveFilter} all={t[lang].all} />
-            <span style={{ fontSize: 12, color: "var(--text-dim)" }}>{filtered.length} {lang === "pt" ? "resultado(s)" : "result(s)"}</span>
+          <div className="reveal case-filter-groups" style={{ marginBottom: 48 }}>
+            <div className="case-filter-row" role="group" aria-label={t[lang].platforms}>
+              <span className="case-filter-label">{t[lang].platforms}</span>
+              {["All", ...platforms].map(value => (
+                <button key={value} type="button" className="tag" aria-pressed={platform === value} onClick={() => setPlatform(value)}>
+                  {value === "All" ? t[lang].all : value}
+                </button>
+              ))}
+            </div>
+            <div className="case-filter-row" role="group" aria-label={t[lang].disciplines}>
+              <span className="case-filter-label">{t[lang].disciplines}</span>
+              {["All", ...disciplines].map(value => (
+                <button key={value} type="button" className="tag" aria-pressed={discipline === value} onClick={() => setDiscipline(value)}>
+                  {value === "All" ? t[lang].all : caseText(disciplineLabels[value], lang)}
+                </button>
+              ))}
+            </div>
+            <span aria-live="polite" style={{ fontSize: 12, color: "var(--text-dim)" }}>
+              {filtered.length} {filtered.length === 1 ? t[lang].project : t[lang].projects}
+            </span>
           </div>
 
           {/* Cases list */}
           <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {filtered.map((c, i) => (
-              <Link key={c.id} to={`/cases/${c.id}`} style={{ textDecoration: "none" }}>
+              <Link key={c.id} to={`/cases/${c.id}`} data-case-card style={{ textDecoration: "none" }}>
                 <div
-                  className="reveal case-list-item"
+                  className="case-list-item"
                   style={{
                     display: "grid",
                     gridTemplateColumns: "280px 1fr auto",
@@ -198,46 +202,30 @@ export function CasesPage({ lang }: CasesPageProps) {
                 >
                   {/* Image */}
                   <div style={{ height: 180, borderRadius: 4, overflow: "hidden", position: "relative", flexShrink: 0 }}>
-                    <img src={c.image} alt={c.title} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }}
+                    <img src={c.heroImage.src} alt={caseText(c.heroImage.alt, lang)} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }}
                       onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.06)")}
                       onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
                     />
-                    <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg, ${c.color}30 0%, transparent 60%)` }} />
+                    <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg, ${c.accent}30 0%, transparent 60%)` }} />
                     {/* Tag overlay */}
-                    <div style={{
-                      position: "absolute", top: 10, left: 10,
-                      padding: "3px 10px", borderRadius: 100,
-                      background: `${tagColors[c.tag] || "var(--gold)"}22`,
-                      border: `1px solid ${tagColors[c.tag] || "var(--gold)"}44`,
-                      color: tagColors[c.tag] || "var(--gold)",
-                      fontSize: 10, fontWeight: 700, letterSpacing: "0.1em",
-                    }}>
-                      {c.tag}
-                    </div>
+                    <div className="tag" style={{ position: "absolute", top: 10, left: 10 }}>{c.platform}</div>
                   </div>
 
                   {/* Content */}
                   <div style={{ minWidth: 0 }}>
-                    <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 8, letterSpacing: "0.05em" }}>{c.client} · {c.industry} · {c.year}</div>
+                    <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 8, letterSpacing: "0.05em" }}>{c.client} · {caseText(c.market, lang)}</div>
                     <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "clamp(18px, 2.2vw, 26px)", lineHeight: 1.2, marginBottom: 10, color: "var(--text)" }}>
-                      {c.title}
+                      {caseText(c.title, lang)}
                     </h3>
-                    <p style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.65, marginBottom: 16 }}>{c.desc}</p>
+                    <p style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.65, marginBottom: 16 }}>{caseText(c.summary, lang)}</p>
                     <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                      {c.services.map((s, j) => (
-                        <span key={j} style={{ fontSize: 10, color: "var(--text-dim)", border: "1px solid rgba(212,160,23,0.1)", padding: "3px 8px", borderRadius: 4 }}>{s}</span>
+                      {c.disciplines.map((s, j) => (
+                        <span key={j} style={{ fontSize: 10, color: "var(--text-dim)", border: "1px solid rgba(212,160,23,0.1)", padding: "3px 8px", borderRadius: 4 }}>{caseText(disciplineLabels[s], lang)}</span>
                       ))}
                     </div>
                   </div>
 
-                  {/* Metrics */}
                   <div style={{ display: "flex", flexDirection: "column", gap: 20, alignItems: "flex-end", flexShrink: 0, minWidth: 120 }}>
-                    {c.metrics.slice(0, 2).map((m, j) => (
-                      <div key={j} style={{ textAlign: "right" }}>
-                        <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(22px, 2.5vw, 32px)", color: "var(--gold)", lineHeight: 1 }}>{m.value}</div>
-                        <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>{m.label}</div>
-                      </div>
-                    ))}
                     <div style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--gold)", fontSize: 11, fontFamily: "var(--font-display)", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
                       {t[lang].readCase}
                       <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -248,6 +236,14 @@ export function CasesPage({ lang }: CasesPageProps) {
                 </div>
               </Link>
             ))}
+            {filtered.length === 0 && (
+              <div className="case-empty">
+                <p>{t[lang].empty}</p>
+                <button type="button" className="btn-outline" onClick={() => { setPlatform("All"); setDiscipline("All"); }}>
+                  {t[lang].clear}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -284,10 +280,10 @@ export function CasesPage({ lang }: CasesPageProps) {
 }
 
 export function CaseDetailPage({ lang, id }: { lang: "en" | "pt"; id: string }) {
-  const c = cases.find(c => c.id === id);
+  const c = legacyCases.find(c => c.id === id);
   const sectionRef = useRef<HTMLElement>(null);
-  const currentIdx = cases.findIndex(c => c.id === id);
-  const nextCase = cases[(currentIdx + 1) % cases.length];
+  const currentIdx = legacyCases.findIndex(c => c.id === id);
+  const nextCase = legacyCases[(currentIdx + 1) % legacyCases.length];
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -339,7 +335,7 @@ export function CaseDetailPage({ lang, id }: { lang: "en" | "pt"; id: string }) 
             <span style={{ fontSize: 12, color: "var(--gold)", fontWeight: 600 }}>{c.client}</span>
           </div>
 
-          <div className="tag reveal" style={{ width: "fit-content", marginBottom: 14, background: `${tagColors[c.tag] || "var(--gold)"}15`, borderColor: `${tagColors[c.tag] || "var(--gold)"}40`, color: tagColors[c.tag] || "var(--gold)" }}>
+          <div className="tag reveal" style={{ width: "fit-content", marginBottom: 14, background: `${c.color}15`, borderColor: `${c.color}40`, color: c.color }}>
             {c.tag}
           </div>
           <div className="reveal" style={{ fontSize: 13, color: "var(--text-dim)", marginBottom: 10, letterSpacing: "0.04em" }}>{c.client}</div>

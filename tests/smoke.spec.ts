@@ -69,6 +69,38 @@ test('portfolio case catalog is complete and internally valid', () => {
   }
 });
 
+test('homepage shows the three configured portfolio features', async ({ page }) => {
+  await page.goto('/');
+
+  await expect(page.locator('[data-case-preview]')).toHaveCount(3);
+  await expect(page.getByText('Dove', { exact: true })).toBeVisible();
+  await expect(page.getByText('MINI Finance Matcher', { exact: true })).toBeVisible();
+  await expect(page.getByText('Arctic Fox Hair Color', { exact: true })).toBeVisible();
+});
+
+test('cases index filters by platform and discipline and recovers from empty results', async ({ page }) => {
+  await page.goto('/cases');
+
+  await expect(page.locator('[data-case-card]')).toHaveCount(14);
+  await page.getByRole('button', { name: 'Shopify', exact: true }).click();
+  await expect(page.locator('[data-case-card]')).toHaveCount(3);
+  await page.getByRole('button', { name: 'Commerce', exact: true }).click();
+  await expect(page.locator('[data-case-card]')).toHaveCount(3);
+  await page.getByRole('button', { name: 'React', exact: true }).click();
+  await expect(page.getByText('Nenhum projeto combina com esses filtros.', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Limpar filtros', exact: true }).click();
+  await expect(page.locator('[data-case-card]')).toHaveCount(14);
+  const doveCard = page.locator('[data-case-card]').filter({ hasText: 'Dove' });
+  await expect(doveCard).toHaveCount(1);
+  await expect(doveCard.locator('.case-list-item')).toHaveCSS('opacity', '1');
+
+  const resultCount = page.locator('[aria-live="polite"]');
+  await expect(resultCount).toHaveText('14 projetos');
+  await page.getByRole('button', { name: 'Headless Commerce', exact: true }).click();
+  await expect(page.locator('[data-case-card]')).toHaveCount(1);
+  await expect(resultCount).toHaveText('1 projeto');
+});
+
 test('portfolio case media is stored locally', async ({ page }) => {
   const images = cases.flatMap(({ heroImage, gallery }) => [heroImage, ...gallery]);
   const hashes = new Set<string>();
@@ -284,8 +316,9 @@ test('mobile case summary and metadata fit the viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/cases');
 
-  const periodBox = await page.getByText('2025–26', { exact: true }).boundingBox();
-  expect((periodBox?.x ?? 390) + (periodBox?.width ?? 0)).toBeLessThanOrEqual(366);
+  const reachMetric = page.locator('.case-page-metrics').getByText('Global + local', { exact: true });
+  const reachBox = await reachMetric.boundingBox();
+  expect((reachBox?.x ?? 390) + (reachBox?.width ?? 0)).toBeLessThanOrEqual(366);
 
   await page.goto('/cases/techbrasil-seo');
   const metadata = page.locator('.case-meta-list');

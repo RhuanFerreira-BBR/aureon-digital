@@ -298,6 +298,46 @@ h1,h2,h3,h4,h5,h6 { font-family: var(--font-display); font-weight: 700; line-hei
 }
 .case-card-img:hover img { transform: scale(1.06); }
 
+.case-filter-groups {
+  display: grid;
+  gap: 20px;
+}
+
+.case-filter-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.case-filter-label {
+  min-width: 84px;
+  color: var(--text-dim);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+
+.case-filter-row .tag {
+  cursor: pointer;
+}
+
+.case-filter-row .tag[aria-pressed="false"] {
+  color: var(--text-muted);
+  background: transparent;
+  border-color: var(--border-dim);
+}
+
+.case-empty {
+  padding: 64px 24px;
+  text-align: center;
+  border: 1px solid var(--border-dim);
+}
+
+.case-empty p {
+  margin-bottom: 24px;
+}
+
 /* ─── BLOG ──────────────────────────────────────────────────────────────── */
 .blog-img {
   overflow: hidden;
@@ -435,6 +475,14 @@ h1,h2,h3,h4,h5,h6 { font-family: var(--font-display); font-weight: 700; line-hei
 }
 
 @media (max-width: 520px) {
+  .case-filter-row {
+    align-items: flex-start;
+  }
+
+  .case-filter-label {
+    width: 100%;
+  }
+
   .contact-form-card {
     padding: 24px !important;
   }

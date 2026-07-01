@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { cases } from "../lib/data";
+import { cases, caseText } from "../lib/cases";
 
 interface CasePreviewProps { lang: "en" | "pt"; }
 
 const t = {
-  en: { label: "Selected Work", title: "Results we're\nproud of.", sub: "A curated look at work that moved the needle.", viewAll: "View all cases", readCase: "Read case" },
-  pt: { label: "Trabalho Selecionado", title: "Resultados dos\nquais nos orgulhamos.", sub: "Uma seleção de trabalhos que fizeram diferença.", viewAll: "Ver todos os cases", readCase: "Ler case" },
+  en: { label: "Selected Work", title: "Real work,\nselected.", sub: "A selection of real digital work across platforms, markets, and disciplines.", viewAll: "View all cases" },
+  pt: { label: "Trabalho Selecionado", title: "Trabalho real,\nselecionado.", sub: "Uma seleção de trabalho digital real em diferentes plataformas, mercados e disciplinas.", viewAll: "Ver todos os cases" },
 };
 
 export function CasePreview({ lang }: CasePreviewProps) {
@@ -27,7 +27,7 @@ export function CasePreview({ lang }: CasePreviewProps) {
     return () => obs.disconnect();
   }, []);
 
-  const preview = cases.slice(0, 3);
+  const preview = cases.filter(item => item.featured);
 
   return (
     <section ref={sectionRef} style={{ padding: "120px 0", position: "relative", overflow: "hidden" }}>
@@ -44,6 +44,7 @@ export function CasePreview({ lang }: CasePreviewProps) {
                 <span key={i} style={{ display: "block", ...(i === 1 ? { color: "var(--gold)" } : {}) }}>{l}</span>
               ))}
             </h2>
+            <p className="reveal" style={{ marginTop: 20, color: "var(--text-muted)", lineHeight: 1.7 }}>{t[lang].sub}</p>
           </div>
           <Link to="/cases" className="btn-outline reveal" style={{ textDecoration: "none", flexShrink: 0 }}>{t[lang].viewAll}</Link>
         </div>
@@ -51,7 +52,7 @@ export function CasePreview({ lang }: CasePreviewProps) {
         {/* Cases */}
         <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: 2 }}>
           {preview.map((c, i) => (
-            <Link key={c.id} to={`/cases/${c.id}`} style={{ textDecoration: "none" }}>
+            <Link key={c.id} to={`/cases/${c.id}`} data-case-preview style={{ textDecoration: "none" }}>
               <div
                 className="reveal card-hover"
                 style={{
@@ -64,28 +65,18 @@ export function CasePreview({ lang }: CasePreviewProps) {
                   height: i === 0 ? 460 : 300,
                 }}
               >
-                <img src={c.image} alt={c.title} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.3, transition: "opacity 0.4s, transform 0.6s cubic-bezier(0.16,1,0.3,1)" }} className="case-preview-img" />
-                <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to top, rgba(8,9,15,0.95) 0%, ${c.color}11 100%)` }} />
+                <img src={c.heroImage.src} alt={caseText(c.heroImage.alt, lang)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.3, transition: "opacity 0.4s, transform 0.6s cubic-bezier(0.16,1,0.3,1)" }} className="case-preview-img" />
+                <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to top, rgba(8,9,15,0.95) 0%, ${c.accent}11 100%)` }} />
 
                 <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: 28 }}>
                   <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 10 }}>
-                    <div className="tag">{c.tag}</div>
-                    <span style={{ fontSize: 11, color: "var(--text-dim)" }}>{c.year}</span>
+                    <div className="tag">{c.platform}</div>
+                    <span style={{ fontSize: 11, color: "var(--text-dim)" }}>{caseText(c.market, lang)}</span>
                   </div>
                   <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 4 }}>{c.client}</div>
                   <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: i === 0 ? "clamp(18px, 2.2vw, 24px)" : 17, lineHeight: 1.25, color: "var(--text)", marginBottom: 12 }}>
-                    {c.title}
+                    {caseText(c.title, lang)}
                   </h3>
-                  {i === 0 && (
-                    <div style={{ display: "flex", gap: 20 }}>
-                      {c.metrics.slice(0, 2).map((m, j) => (
-                        <div key={j}>
-                          <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 24, color: "var(--gold)" }}>{m.value}</div>
-                          <div style={{ fontSize: 11, color: "var(--text-muted)" }}>{m.label}</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
               </div>
             </Link>
