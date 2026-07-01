@@ -103,7 +103,7 @@ export function CaseDetailPage({ lang, id }: { lang: Lang; id: string }) {
         <header className="portfolio-case-hero">
           <div className="portfolio-case-container">
             <Link to="/cases" className="portfolio-case-back">{copy[lang].back}</Link>
-            <p className="portfolio-case-kicker">{item.platform} · {caseText(item.market, lang)}</p>
+            <p className="portfolio-case-kicker"><span>{item.client}</span> · {item.platform} · {caseText(item.market, lang)}</p>
             <h1>{caseText(item.title, lang)}</h1>
             <p className="portfolio-case-summary">{caseText(item.summary, lang)}</p>
             <a className="btn-gold" href={item.sourceUrl} target="_blank" rel="noopener noreferrer">

@@ -147,6 +147,20 @@ test('every real case resolves unique indexable metadata', () => {
   }
 });
 
+for (const item of cases) {
+  test(`renders real case ${item.id}`, async ({ page }) => {
+    await page.goto(`/cases/${item.id}`);
+
+    await expect(page.getByText(item.client, { exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(caseText(item.title, 'pt'));
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index,follow');
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      'href',
+      `https://aureondigital.co/cases/${item.id}`,
+    );
+  });
+}
+
 test('uppercase real case route renders the canonical Dove case', async ({ page }) => {
   await page.goto('/cases/DOVE-GLOBAL-AEM');
 
@@ -529,6 +543,25 @@ test('mobile case summary and metadata fit the viewport', async ({ page }) => {
   await expect(metadata).toHaveCount(1);
   expect(await metadata.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBeTruthy();
 });
+
+for (const slug of [
+  'dove-global-aem',
+  'mini-finance-matcher-react',
+  'avary-drone-shopify',
+  'celine-medspas-wordpress',
+  'arctic-fox-headless-commerce',
+]) {
+  test(`mobile real case ${slug} fits the viewport`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`/cases/${slug}`);
+
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)).toBeTruthy();
+    await expect(page.locator('.portfolio-case-meta')).toBeVisible();
+    await expect(page.locator('.portfolio-case-gallery')).toBeVisible();
+    await expect(page.locator('.portfolio-case-impact')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Visitar website' })).toBeVisible();
+  });
+}
 
 for (const width of [390, 768, 991, 992]) {
   test(`top navigation controls fit at ${width}px`, async ({ page }) => {
