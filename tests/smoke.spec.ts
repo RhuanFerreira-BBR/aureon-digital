@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
 
 import { contactHref } from '../src/lib/contact';
+import { cases, caseText, disciplineLabels } from '../src/lib/cases';
 import { resolvePageMeta } from '../src/lib/seo';
 
 const routes = [
@@ -39,6 +40,32 @@ const seoCases = [
     canonical: 'https://aureondigital.co/blog/geo-vs-seo-2025',
   },
 ];
+
+test('portfolio case catalog is complete and internally valid', () => {
+  expect(cases).toHaveLength(14);
+  expect(new Set(cases.map(({ id }) => id)).size).toBe(14);
+  expect(new Set(cases.map(({ sourceUrl }) => sourceUrl)).size).toBe(14);
+  expect(cases.filter(({ featured }) => featured).map(({ client }) => client)).toEqual([
+    'Dove',
+    'MINI Finance Matcher',
+    'Arctic Fox Hair Color',
+  ]);
+
+  const ids = new Set(cases.map(({ id }) => id));
+  for (const portfolioCase of cases) {
+    for (const lang of ['pt', 'en'] as const) {
+      expect(caseText(portfolioCase.title, lang).length).toBeGreaterThan(20);
+      expect(caseText(portfolioCase.summary, lang).length).toBeGreaterThan(40);
+      expect(caseText(portfolioCase.summary, lang).length).toBeLessThanOrEqual(200);
+    }
+
+    expect(portfolioCase.highlights).toHaveLength(3);
+    expect(portfolioCase.metrics).toHaveLength(3);
+    expect(portfolioCase.metrics.every(({ evidence }) => ['scope', 'estimated'].includes(evidence))).toBeTruthy();
+    expect(portfolioCase.disciplines.every((discipline) => disciplineLabels[discipline])).toBeTruthy();
+    expect(portfolioCase.relatedCaseIds.every((relatedCaseId) => ids.has(relatedCaseId))).toBeTruthy();
+  }
+});
 
 for (const seoCase of seoCases) {
   test(`sets SEO metadata for ${seoCase.route}`, async ({ page }) => {
