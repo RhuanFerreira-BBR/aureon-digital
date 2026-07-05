@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
 import { cases } from '../src/lib/cases';
 import { blogPath, findBlogPost, legacyBlogRedirects, pairedBlogPath, posts } from '../src/lib/blog';
+import { resolvePageMeta } from '../src/lib/seo';
 import { splitParagraphLinks } from '../src/components/PostDetailPage';
 
 const expectLocalSvgReferences = (svg: string) => {
@@ -89,6 +90,51 @@ test('blog route helpers preserve paired articles', () => {
   expect(conversion && blogPath(conversion, 'en')).toBe('/en/blog/website-conversion-strategy');
   expect(pairedBlogPath('/en/blog/seo-geo-ai-search', 'pt')).toBe('/blog/seo-geo-busca-ia');
   expect(pairedBlogPath('/about', 'en')).toBeNull();
+});
+
+test('localized article metadata has alternates and schema', () => {
+  const meta = resolvePageMeta('/en/blog/seo-geo-ai-search', 'en');
+  expect(meta.canonical).toBe('https://aureondigital.co/en/blog/seo-geo-ai-search');
+  expect(meta.alternates).toEqual({
+    pt: 'https://aureondigital.co/blog/seo-geo-busca-ia',
+    en: 'https://aureondigital.co/en/blog/seo-geo-ai-search',
+    xDefault: 'https://aureondigital.co/blog/seo-geo-busca-ia',
+  });
+  expect(meta.schema).toMatchObject({ '@context': 'https://schema.org', '@type': 'Article', inLanguage: 'en' });
+});
+
+test('opposite-locale slugs resolve canonical article metadata', () => {
+  const portuguese = resolvePageMeta('/blog/website-conversion-strategy', 'pt');
+  expect(portuguese.canonical).toBe('https://aureondigital.co/blog/site-que-converte');
+  expect(portuguese.robots).toBe('index,follow');
+  expect(portuguese.schema).toMatchObject({ '@type': 'Article', inLanguage: 'pt-BR' });
+  expect(portuguese.alternates?.en).toBe('https://aureondigital.co/en/blog/website-conversion-strategy');
+
+  const english = resolvePageMeta('/en/blog/site-que-converte', 'en');
+  expect(english.canonical).toBe('https://aureondigital.co/en/blog/website-conversion-strategy');
+  expect(english.robots).toBe('index,follow');
+  expect(english.schema).toMatchObject({ '@type': 'Article', inLanguage: 'en' });
+  expect(english.alternates?.pt).toBe('https://aureondigital.co/blog/site-que-converte');
+});
+
+test('unknown blog metadata is localized and excluded from the index', () => {
+  const meta = resolvePageMeta('/en/blog/unknown/', 'pt');
+  expect(meta.title).toBe('Article not found | AUREON');
+  expect(meta.canonical).toBe('https://aureondigital.co/en/blog/unknown');
+  expect(meta.robots).toBe('noindex,follow');
+  expect(meta.schema).toBeUndefined();
+});
+
+test('localized blog indexes have paired canonicals', () => {
+  const meta = resolvePageMeta('/EN/BLOG/', 'pt');
+  expect(meta.title).toBe('Web Design, SEO and GEO Blog | AUREON');
+  expect(meta.canonical).toBe('https://aureondigital.co/en/blog');
+  expect(meta.alternates).toEqual({
+    pt: 'https://aureondigital.co/blog',
+    en: 'https://aureondigital.co/en/blog',
+    xDefault: 'https://aureondigital.co/blog',
+  });
+  expect(meta.type).toBe('website');
 });
 
 test('inline links follow text order and preserve the source paragraph', () => {
@@ -208,4 +254,50 @@ test('language selector preserves the article', async ({ page }) => {
 
   await page.goto('/en/blog/seo-geo-ai-search');
   await expect(page.getByRole('heading', { level: 1, name: post?.locales.en.title })).toBeVisible();
+});
+
+test('mixed-case blog routes keep the URL locale and paired navigation', async ({ page }) => {
+  const post = findBlogPost('seo-geo-ai-search', 'en');
+  await page.goto('/EN/BLOG/');
+  await expect(page.getByRole('heading', { level: 1, name: 'Content that turns discovery into demand.' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'PT', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'PT', exact: true }).click();
+  await expect(page).toHaveURL(/\/blog$/);
+
+  await page.goto('/EN/BLOG/seo-geo-ai-search');
+  await expect(page.getByRole('heading', { level: 1, name: post?.locales.en.title })).toBeVisible();
+  await page.getByRole('button', { name: 'PT', exact: true }).click();
+  await expect(page).toHaveURL(/\/blog\/seo-geo-busca-ia$/);
+});
+
+test('opposite-locale slugs redirect to the canonical article route', async ({ page }) => {
+  const post = findBlogPost('site-que-converte', 'pt');
+  expect(post).toBeDefined();
+
+  for (const [route, canonical, title] of [
+    ['/blog/website-conversion-strategy', '/blog/site-que-converte', post?.locales.pt.title],
+    ['/en/blog/site-que-converte', '/en/blog/website-conversion-strategy', post?.locales.en.title],
+  ] as const) {
+    await page.goto(route);
+    await expect(page).toHaveURL(new RegExp(`${canonical}$`));
+    await expect(page.getByRole('heading', { level: 1, name: title })).toBeVisible();
+  }
+});
+
+test('article head stays idempotent after language navigation', async ({ page }) => {
+  await page.goto('/blog/site-que-converte');
+  await page.getByRole('button', { name: 'EN', exact: true }).click();
+  await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
+  await expect(page.locator('link[data-aureon-hreflang]')).toHaveCount(3);
+  await expect(page.locator('script#article-jsonld')).toHaveCount(1);
+});
+
+test('article metadata is removed after leaving the blog', async ({ page }) => {
+  await page.goto('/blog/site-que-converte');
+  await expect(page.locator('link[data-aureon-hreflang]')).toHaveCount(3);
+  await expect(page.locator('script#article-jsonld')).toHaveCount(1);
+  await page.locator('.desktop-nav').getByRole('link', { name: 'Sobre', exact: true }).click();
+  await expect(page).toHaveURL(/\/about$/);
+  await expect(page.locator('link[data-aureon-hreflang]')).toHaveCount(0);
+  await expect(page.locator('script#article-jsonld')).toHaveCount(0);
 });

@@ -164,7 +164,7 @@ export function Nav({ lang, setLang }: NavProps) {
 
   const isHome = location === "/";
   const isCases = location.startsWith("/cases");
-  const isBlog = /^\/(?:en\/)?blog(?:\/|$)/.test(location);
+  const isBlog = /^\/(?:en\/)?blog(?:\/|$)/i.test(location);
   const blogHref = lang === "en" ? "/en/blog" : "/blog";
 
   function changeLanguage() {

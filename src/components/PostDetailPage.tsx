@@ -1,5 +1,5 @@
 import { Fragment, type CSSProperties, type ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 import { blogIndexPath, blogPath, findBlogPost, posts, type BlogBlock, type BlogInlineLink, type BlogLang } from "../lib/blog";
 import { cases, caseMediaUrl, caseText } from "../lib/cases";
@@ -77,6 +77,9 @@ export function PostDetailPage({ lang, slug }: { lang: BlogLang; slug: string })
   const post = findBlogPost(slug, lang);
 
   if (!post) {
+    const pairedPost = findBlogPost(slug, lang === "pt" ? "en" : "pt");
+    if (pairedPost) return <Navigate replace to={blogPath(pairedPost, lang)} />;
+
     return (
       <main className="blog-not-found">
         <h1>{copy[lang].notFound}</h1>

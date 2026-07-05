@@ -81,9 +81,9 @@ function CursorGlow() {
 export default function App() {
   const [lang, setLang] = useState<Lang>("pt");
   const { pathname, hash } = useLocation();
-  const blogLang: Lang | null = /^\/en\/blog(?:\/|$)/.test(pathname)
+  const blogLang: Lang | null = /^\/en\/blog(?:\/|$)/i.test(pathname)
     ? "en"
-    : /^\/blog(?:\/|$)/.test(pathname)
+    : /^\/blog(?:\/|$)/i.test(pathname)
       ? "pt"
       : null;
   const activeLang = blogLang ?? lang;

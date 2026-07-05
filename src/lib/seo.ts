@@ -1,6 +1,6 @@
 /// <reference lib="dom" />
 
-import { posts } from './data';
+import { blogIndexPath, blogPath, findBlogPost, posts, type BlogLang } from './blog';
 import { cases, caseText } from './cases';
 
 export type SiteLang = 'en' | 'pt';
@@ -17,6 +17,8 @@ export interface PageMeta extends MetaCopy {
   type: 'website' | 'article';
   image: string;
   imageAlt: string;
+  alternates?: { pt: string; en: string; xDefault: string };
+  schema?: Record<string, unknown>;
 }
 
 const siteUrl = 'https://aureondigital.co';
@@ -117,20 +119,76 @@ function completeMeta(
   };
 }
 
+function blogAlternates(post?: (typeof posts)[number]) {
+  const pt = `${siteUrl}${post ? blogPath(post, 'pt') : blogIndexPath('pt')}`;
+  const en = `${siteUrl}${post ? blogPath(post, 'en') : blogIndexPath('en')}`;
+  return { pt, en, xDefault: pt };
+}
+
 export function resolvePageMeta(pathname: string, lang: SiteLang): PageMeta {
   const normalizedPathname = normalizePathname(pathname);
-  const postSlug = normalizedPathname.match(/^\/blog\/([^/]+)$/i)?.[1];
-  if (postSlug) {
-    const post = posts.find((item) => item.id === postSlug);
-    if (post) {
-      return completeMeta(
-        { title: `${post.title} | AUREON`, description: post.excerpt },
-        `/blog/${postSlug}`,
-        lang,
-        'index,follow',
-        'article',
-      );
+  const blogMatch = normalizedPathname.match(/^\/(en\/)?blog(?:\/([^/]+))?$/i);
+  if (blogMatch) {
+    const blogLang: BlogLang = blogMatch[1] ? 'en' : 'pt';
+    const postSlug = blogMatch[2];
+
+    if (!postSlug) {
+      return {
+        ...completeMeta(
+          pages[blogLang]['/blog'],
+          blogIndexPath(blogLang),
+          blogLang,
+          'index,follow',
+          'website',
+        ),
+        alternates: blogAlternates(),
+      };
     }
+
+    const post = findBlogPost(postSlug, blogLang)
+      ?? findBlogPost(postSlug, blogLang === 'pt' ? 'en' : 'pt');
+    if (post) {
+      const locale = post.locales[blogLang];
+      const canonicalPath = blogPath(post, blogLang);
+      const canonical = `${siteUrl}${canonicalPath}`;
+      return {
+        ...completeMeta(
+          { title: locale.seoTitle, description: locale.seoDescription },
+          canonicalPath,
+          blogLang,
+          'index,follow',
+          'article',
+          { image: `${siteUrl}${post.image}`, imageAlt: locale.imageAlt },
+        ),
+        alternates: blogAlternates(post),
+        schema: {
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: locale.title,
+          description: locale.seoDescription,
+          image: `${siteUrl}${post.image}`,
+          datePublished: post.published,
+          dateModified: post.modified,
+          inLanguage: blogLang === 'pt' ? 'pt-BR' : 'en',
+          mainEntityOfPage: canonical,
+          author: { '@type': 'Organization', name: post.author, url: siteUrl },
+          publisher: { '@type': 'Organization', name: 'AUREON', url: siteUrl },
+        },
+      };
+    }
+
+    return completeMeta(
+      {
+        title: blogLang === 'pt' ? 'Artigo não encontrado | AUREON' : 'Article not found | AUREON',
+        description: blogLang === 'pt'
+          ? 'O artigo solicitado não foi encontrado.'
+          : 'The requested article could not be found.',
+      },
+      `${blogIndexPath(blogLang)}/${postSlug}`,
+      blogLang,
+      'noindex,follow',
+      'website',
+    );
   }
 
   const caseSlug = normalizedPathname.match(/^\/cases\/([^/]+)$/i)?.[1];
@@ -210,10 +268,39 @@ function setCanonical(href: string) {
   element.href = href;
 }
 
+function setAlternates(alternates?: PageMeta['alternates']) {
+  document.head.querySelectorAll('link[data-aureon-hreflang]').forEach(element => element.remove());
+  if (!alternates) return;
+
+  for (const [hreflang, href] of [
+    ['pt-BR', alternates.pt],
+    ['en', alternates.en],
+    ['x-default', alternates.xDefault],
+  ]) {
+    const element = document.createElement('link');
+    element.rel = 'alternate';
+    element.hreflang = hreflang;
+    element.href = href;
+    element.setAttribute('data-aureon-hreflang', '');
+    document.head.append(element);
+  }
+}
+
+function setSchema(schema?: PageMeta['schema']) {
+  document.head.querySelectorAll('#article-jsonld').forEach(element => element.remove());
+  if (!schema) return;
+
+  const element = document.createElement('script');
+  element.id = 'article-jsonld';
+  element.type = 'application/ld+json';
+  element.textContent = JSON.stringify(schema).replace(/</g, '\\u003c');
+  document.head.append(element);
+}
+
 export function applyPageMeta(pathname: string, lang: SiteLang) {
   const meta = resolvePageMeta(pathname, lang);
 
-  document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+  document.documentElement.lang = meta.locale === 'pt_BR' ? 'pt-BR' : 'en';
   document.title = meta.title;
   setMeta('name', 'description', meta.description);
   setMeta('name', 'robots', meta.robots);
@@ -231,4 +318,6 @@ export function applyPageMeta(pathname: string, lang: SiteLang) {
   setMeta('name', 'twitter:image', meta.image);
   setMeta('name', 'twitter:image:alt', meta.imageAlt);
   setCanonical(meta.canonical);
+  setAlternates(meta.alternates);
+  setSchema(meta.schema);
 }

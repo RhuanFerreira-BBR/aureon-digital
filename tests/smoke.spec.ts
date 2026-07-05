@@ -14,7 +14,7 @@ const routes = [
   '/cases',
   '/cases/dove-global-aem',
   '/blog',
-  '/blog/geo-vs-seo-2025',
+  '/blog/site-que-converte',
   '/about',
   '/faq',
   '/privacy',
@@ -37,9 +37,10 @@ const seoCases = [
   { route: '/', title: 'AUREON | Web Design, SEO e GEO', canonical: 'https://aureondigital.co/' },
   { route: '/services', title: 'Serviços de Web Design, SEO e GEO | AUREON', canonical: 'https://aureondigital.co/services' },
   {
-    route: '/blog/geo-vs-seo-2025',
-    title: 'GEO vs SEO: Why the next decade belongs to AI search | AUREON',
-    canonical: 'https://aureondigital.co/blog/geo-vs-seo-2025',
+    route: '/blog/site-que-converte',
+    title: 'Como transformar tráfego em oportunidades qualificadas | AUREON',
+    canonical: 'https://aureondigital.co/blog/site-que-converte',
+    image: 'https://aureondigital.co/blog/site-conversion.svg',
   },
 ];
 
@@ -347,7 +348,10 @@ for (const seoCase of seoCases) {
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index,follow');
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', seoCase.canonical);
     await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', seoCase.canonical);
-    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://aureondigital.co/aureon-logo.png');
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+      'content',
+      seoCase.image ?? 'https://aureondigital.co/aureon-logo.png',
+    );
   });
 }
 
@@ -370,10 +374,10 @@ test('normalizes SEO metadata canonical without leaving the site origin', () => 
 });
 
 test('normalizes trailing slashes for dynamic SEO metadata', () => {
-  const post = resolvePageMeta('/blog/geo-vs-seo-2025/', 'pt');
+  const post = resolvePageMeta('/blog/site-que-converte/', 'pt');
   expect(post.type).toBe('article');
   expect(post.robots).toBe('index,follow');
-  expect(post.canonical).toBe('https://aureondigital.co/blog/geo-vs-seo-2025');
+  expect(post.canonical).toBe('https://aureondigital.co/blog/site-que-converte');
 
   const caseMeta = resolvePageMeta('/cases/techbrasil-seo/', 'pt');
   expect(caseMeta.robots).toBe('noindex,follow');
@@ -381,11 +385,11 @@ test('normalizes trailing slashes for dynamic SEO metadata', () => {
 });
 
 test('normalizes mixed-case blog prefix in SEO metadata', () => {
-  const meta = resolvePageMeta('/Blog/geo-vs-seo-2025', 'pt');
-  expect(meta.title).toBe('GEO vs SEO: Why the next decade belongs to AI search | AUREON');
+  const meta = resolvePageMeta('/Blog/site-que-converte', 'pt');
+  expect(meta.title).toBe('Como transformar tráfego em oportunidades qualificadas | AUREON');
   expect(meta.robots).toBe('index,follow');
   expect(meta.type).toBe('article');
-  expect(meta.canonical).toBe('https://aureondigital.co/blog/geo-vs-seo-2025');
+  expect(meta.canonical).toBe('https://aureondigital.co/blog/site-que-converte');
 });
 
 test('normalizes mixed-case unknown routes in SEO metadata', () => {
