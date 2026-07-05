@@ -6,7 +6,7 @@ import { caseMediaUrl } from "../lib/cases";
 const copy = {
   pt: {
     label: "Estratégia digital",
-    title: "Conteúdo para transformar descoberta em demanda.",
+    title: "Conteúdo para ser encontrado — e escolhido.",
     intro: "Guias para líderes que precisam conectar SEO, experiência, performance e conversão a decisões de negócio mais claras.",
     featured: "Leitura essencial",
     pillars: "Pilares de aquisição",
@@ -18,7 +18,7 @@ const copy = {
   },
   en: {
     label: "Digital strategy",
-    title: "Content that turns discovery into demand.",
+    title: "Content built to be found — and chosen.",
     intro: "Guides for leaders who need to connect SEO, experience, performance, and conversion to clearer business decisions.",
     featured: "Essential reading",
     pillars: "Acquisition pillars",
@@ -41,7 +41,11 @@ function ArticleCard({ post, lang, featured = false }: { post: BlogPost; lang: B
       style={{ "--blog-accent": post.accent } as React.CSSProperties}
     >
       <div className="blog-card-art">
-        <img src={caseMediaUrl(post.image, import.meta.env.BASE_URL)} alt={article.imageAlt} />
+        <img
+          src={caseMediaUrl(post.image, import.meta.env.BASE_URL)}
+          alt={article.imageAlt}
+          onError={event => { event.currentTarget.hidden = true; }}
+        />
       </div>
       <div className="blog-card-copy">
         <div className="blog-card-meta">

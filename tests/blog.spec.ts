@@ -285,8 +285,12 @@ test('blog artwork reference policy rejects non-local resources', () => {
 });
 
 test('both indexes render the acquisition hub', async ({ page }) => {
-  for (const route of ['/blog', '/en/blog']) {
+  for (const [route, title] of [
+    ['/blog', 'Conteúdo para ser encontrado — e escolhido.'],
+    ['/en/blog', 'Content built to be found — and chosen.'],
+  ] as const) {
     await page.goto(route);
+    await expect(page.getByRole('heading', { level: 1, name: title })).toBeVisible();
     await expect(page.locator('[data-blog-card]')).toHaveCount(4);
     await expect(page.locator('[data-blog-index-cta]')).toBeVisible();
   }
@@ -312,7 +316,7 @@ for (const route of ['/blog', '/en/blog', '/blog/site-que-converte', '/en/blog/s
       () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
     )).toBeTruthy();
     const ctas = page.locator('a[data-blog-cta]');
-    await expect(ctas).toHaveCount(route === '/blog' || route === '/en/blog' ? 1 : 2);
+    await expect(ctas).toHaveCount(1);
     for (const cta of await ctas.all()) {
       const box = await cta.boundingBox();
       expect(box).not.toBeNull();
@@ -331,6 +335,95 @@ test('article renders semantic conversion and trust blocks', async ({ page }) =>
   const sourceBox = await page.locator('[data-blog-sources] a:visible').first().boundingBox();
   expect(sourceBox).not.toBeNull();
   expect(sourceBox?.height).toBeGreaterThanOrEqual(44);
+});
+
+test('mobile table of contents precedes the article body and stays sticky on desktop', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/blog/site-que-converte');
+  const sidebar = page.locator('.blog-article-sidebar');
+  const body = page.locator('.blog-article-body');
+  await expect(sidebar).toBeVisible();
+  const mobileSidebarBox = await sidebar.boundingBox();
+  const mobileBodyBox = await body.boundingBox();
+  expect(mobileSidebarBox?.y).toBeLessThan(mobileBodyBox?.y ?? 0);
+  expect(await page.evaluate(() => Boolean(
+    document.querySelector('.blog-article-sidebar')?.compareDocumentPosition(document.querySelector('.blog-article-body')!)
+      & Node.DOCUMENT_POSITION_FOLLOWING,
+  ))).toBeTruthy();
+
+  await page.setViewportSize({ width: 1440, height: 1200 });
+  expect(await sidebar.evaluate(element => getComputedStyle(element).position)).toBe('sticky');
+});
+
+test('blog artwork uses contain and keeps frames after image failures', async ({ page }) => {
+  await page.route('**/blog/site-conversion.svg', route => route.abort());
+  await page.goto('/blog');
+  const featuredFrame = page.locator('.blog-featured-card .blog-card-art');
+  const featuredImage = featuredFrame.locator('img');
+  await expect(featuredImage).toHaveJSProperty('hidden', true);
+  await expect(featuredImage).toBeHidden();
+  await expect(featuredFrame).toBeVisible();
+  expect((await featuredFrame.boundingBox())?.height).toBeGreaterThanOrEqual(200);
+  expect(await featuredImage.evaluate(element => getComputedStyle(element).objectFit)).toBe('contain');
+
+  await page.goto('/blog/site-que-converte');
+  const heroFrame = page.locator('.blog-article-art');
+  await expect(heroFrame.locator('img')).toHaveJSProperty('hidden', true);
+  await expect(heroFrame.locator('img')).toBeHidden();
+  await expect(heroFrame).toBeVisible();
+  expect((await heroFrame.boundingBox())?.height).toBeGreaterThanOrEqual(200);
+
+  await page.locator('.blog-next-article').click();
+  await expect(page.locator('.blog-article-art img')).toBeVisible();
+});
+
+test('related case frame survives failures and resets across article navigation', async ({ page }) => {
+  const dove = cases.find(item => item.id === 'dove-global-aem');
+  const mini = cases.find(item => item.id === 'mini-finance-matcher-react');
+  expect(dove).toBeDefined();
+  expect(mini).toBeDefined();
+  if (!dove || !mini) throw new Error('Expected Dove and MINI cases');
+
+  await page.route(`**/${dove.heroImage.src.replace(/^\/+/, '')}`, route => route.abort());
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/blog/quando-redesenhar-site');
+  await expect(page.locator('[data-blog-case="dove-global-aem"]')).toHaveCount(1);
+  const frame = page.locator('.blog-related-case-art');
+  await expect(frame.locator('img')).toHaveJSProperty('hidden', true);
+  await expect(frame.locator('img')).toBeHidden();
+  await expect(frame).toBeVisible();
+  expect((await frame.boundingBox())?.height).toBeGreaterThanOrEqual(200);
+
+  await page.locator('.blog-next-article').click();
+  await expect(page).toHaveURL(/\/blog\/site-que-converte$/);
+  await expect(page.locator('[data-blog-case="mini-finance-matcher-react"]')).toHaveCount(1);
+  const miniImage = page.locator('.blog-related-case-art img');
+  await expect(miniImage).toHaveAttribute('src', mini.heroImage.src);
+  await expect(miniImage).toHaveJSProperty('hidden', false);
+  await expect(miniImage).toBeVisible();
+  expect(await miniImage.evaluate(element => getComputedStyle(element).display)).toBe('block');
+  expect(await miniImage.evaluate(element => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+});
+
+test('article hero shows author and localized update date', async ({ page }) => {
+  const post = findBlogPost('site-que-converte', 'pt');
+  expect(post).toBeDefined();
+  if (!post) throw new Error('Expected the conversion article');
+
+  for (const [route, lang, updated] of [
+    ['/blog/site-que-converte', 'pt', 'Atualizado em'],
+    ['/en/blog/website-conversion-strategy', 'en', 'Updated on'],
+  ] as const) {
+    await page.goto(route);
+    const meta = page.locator('.blog-article-meta');
+    const modifiedDate = new Intl.DateTimeFormat(lang === 'pt' ? 'pt-BR' : 'en-US', {
+      dateStyle: 'long',
+      timeZone: 'UTC',
+    }).format(new Date(`${post.modified}T00:00:00Z`));
+    await expect(meta).toContainText(post.author);
+    await expect(meta).toContainText(post.locales[lang].readTime);
+    await expect(meta).toContainText(`${updated} ${modifiedDate}`);
+  }
 });
 
 test('unknown articles use a localized heading', async ({ page }) => {
@@ -381,7 +474,7 @@ test('language selector preserves the article', async ({ page }) => {
 test('mixed-case blog routes keep the URL locale and paired navigation', async ({ page }) => {
   const post = findBlogPost('seo-geo-ai-search', 'en');
   await page.goto('/EN/BLOG/');
-  await expect(page.getByRole('heading', { level: 1, name: 'Content that turns discovery into demand.' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'Content built to be found — and chosen.' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'PT', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'PT', exact: true }).click();
   await expect(page).toHaveURL(/\/blog$/);

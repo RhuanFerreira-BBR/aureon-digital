@@ -12,11 +12,10 @@ const copy = {
     viewCase: "Ver case",
     author: "Escrito por",
     published: "Publicado em",
+    updated: "Atualizado em",
     next: "Próximo artigo",
     notFound: "Artigo não encontrado.",
     sourceLink: "Abrir fonte",
-    sidebarCta: "Precisa priorizar seu próximo passo digital?",
-    sidebarButton: "Falar com a AUREON",
   },
   en: {
     back: "← All articles",
@@ -25,11 +24,10 @@ const copy = {
     viewCase: "View case",
     author: "Written by",
     published: "Published on",
+    updated: "Updated on",
     next: "Next article",
     notFound: "Article not found.",
     sourceLink: "Open source",
-    sidebarCta: "Need to prioritize your next digital move?",
-    sidebarButton: "Talk to AUREON",
   },
 } satisfies Record<BlogLang, Record<string, string>>;
 
@@ -92,6 +90,7 @@ export function PostDetailPage({ lang, slug }: { lang: BlogLang; slug: string })
   const headings = article.blocks.filter((block): block is Extract<BlogBlock, { kind: "heading" }> => block.kind === "heading");
   const nextPost = posts[(posts.findIndex(item => item.id === post.id) + 1) % posts.length];
   const date = new Intl.DateTimeFormat(lang === "pt" ? "pt-BR" : "en-US", { dateStyle: "long", timeZone: "UTC" }).format(new Date(`${post.published}T00:00:00Z`));
+  const modifiedDate = new Intl.DateTimeFormat(lang === "pt" ? "pt-BR" : "en-US", { dateStyle: "long", timeZone: "UTC" }).format(new Date(`${post.modified}T00:00:00Z`));
 
   const renderBlock = (block: BlogBlock, index: number) => {
     switch (block.kind) {
@@ -127,7 +126,14 @@ export function PostDetailPage({ lang, slug }: { lang: BlogLang; slug: string })
         if (!item) return null;
         return (
           <Link className="blog-related-case" data-blog-case={item.id} key={index} to={`/cases/${item.id}`}>
-            <img src={caseMediaUrl(item.heroImage.src, import.meta.env.BASE_URL)} alt={caseText(item.heroImage.alt, lang)} />
+            <div className="blog-related-case-art">
+              <img
+                key={item.heroImage.src}
+                src={caseMediaUrl(item.heroImage.src, import.meta.env.BASE_URL)}
+                alt={caseText(item.heroImage.alt, lang)}
+                onError={event => { event.currentTarget.hidden = true; }}
+              />
+            </div>
             <span>{copy[lang].related}</span>
             <h3>{item.client}</h3>
             <p>{caseText(item.summary, lang)}</p>
@@ -173,25 +179,32 @@ export function PostDetailPage({ lang, slug }: { lang: BlogLang; slug: string })
                 <p className="section-label">{article.category}</p>
                 <h1>{article.title}</h1>
                 <p>{article.excerpt}</p>
-                <div className="blog-article-meta"><span>{date}</span><span>{article.readTime}</span></div>
+                <div className="blog-article-meta">
+                  <span>{copy[lang].author} {post.author}</span>
+                  <span>{article.readTime}</span>
+                  <span>{copy[lang].updated} {modifiedDate}</span>
+                </div>
               </div>
-              <img src={caseMediaUrl(post.image, import.meta.env.BASE_URL)} alt={article.imageAlt} />
+              <div className="blog-article-art">
+                <img
+                  key={post.image}
+                  src={caseMediaUrl(post.image, import.meta.env.BASE_URL)}
+                  alt={article.imageAlt}
+                  onError={event => { event.currentTarget.hidden = true; }}
+                />
+              </div>
             </div>
           </div>
         </header>
 
         <div className="blog-article-layout blog-shell">
-          <div className="blog-article-body">{article.blocks.map(renderBlock)}</div>
           <aside className="blog-article-sidebar">
             <nav aria-label={copy[lang].contents}>
               <strong>{copy[lang].contents}</strong>
               {headings.map(heading => <a href={`#${heading.id}`} key={heading.id}>{heading.text}</a>)}
             </nav>
-            <div>
-              <p>{copy[lang].sidebarCta}</p>
-              <Link data-blog-cta to={post.serviceHref}>{copy[lang].sidebarButton} →</Link>
-            </div>
           </aside>
+          <div className="blog-article-body">{article.blocks.map(renderBlock)}</div>
         </div>
 
         <Link className="blog-next-article" to={blogPath(nextPost, lang)}>
