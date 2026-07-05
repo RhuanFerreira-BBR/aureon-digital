@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="seo-geo-title seo-geo-desc">
+  <title id="seo-geo-title">Search rings connected to an answer graph</title>
+  <desc id="seo-geo-desc">Layered search rings connect queries, context and entities to a structured answer node.</desc>
+  <defs>
+    <pattern id="seo-geo-grid" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M80 0H0V80" fill="none" stroke="#d4a017" stroke-opacity=".14" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="#08090f"/>
+  <rect width="1600" height="900" fill="url(#seo-geo-grid)"/>
+  <text x="120" y="145" fill="#d4a017" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="5">SEARCH → ANSWER</text>
+  <text x="120" y="215" fill="#f4f0e8" font-family="Arial, sans-serif" font-size="58" font-weight="700">Build authority machines can read.</text>
+  <g fill="none" stroke="#4AE2A0">
+    <circle cx="430" cy="540" r="205" stroke-opacity=".18" stroke-width="2"/>
+    <circle cx="430" cy="540" r="145" stroke-opacity=".42" stroke-width="3"/>
+    <circle cx="430" cy="540" r="84" stroke-width="5"/>
+  </g>
+  <circle cx="430" cy="540" r="17" fill="#4AE2A0"/>
+  <g fill="#f4f0e8" font-family="Arial, sans-serif" font-size="17" font-weight="700" letter-spacing="2">
+    <text x="354" y="315">QUERY</text>
+    <text x="548" y="405">CONTEXT</text>
+    <text x="312" y="675">ENTITY</text>
+  </g>
+  <g fill="none" stroke="#f4f0e8" stroke-opacity=".56" stroke-width="3">
+    <path d="M635 540H830M830 540 970 390M830 540l140 150M970 390l185 88M970 690l185-112M1155 478v100M1155 478l205 62M1155 578l205-38"/>
+  </g>
+  <g fill="#08090f" stroke="#4AE2A0" stroke-width="4">
+    <circle cx="830" cy="540" r="36"/>
+    <circle cx="970" cy="390" r="42"/>
+    <circle cx="970" cy="690" r="42"/>
+    <circle cx="1155" cy="478" r="46"/>
+    <circle cx="1155" cy="578" r="46"/>
+  </g>
+  <g fill="#4AE2A0">
+    <circle cx="830" cy="540" r="8"/>
+    <circle cx="970" cy="390" r="9"/>
+    <circle cx="970" cy="690" r="9"/>
+    <circle cx="1155" cy="478" r="10"/>
+    <circle cx="1155" cy="578" r="10"/>
+  </g>
+  <rect x="1320" y="472" width="160" height="136" rx="28" fill="#4AE2A0"/>
+  <path d="M1360 520h80m-80 26h58m-58 26h70" fill="none" stroke="#08090f" stroke-linecap="round" stroke-width="8"/>
+  <text x="1400" y="660" fill="#f4f0e8" font-family="Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="3" text-anchor="middle">ANSWER</text>
+</svg>

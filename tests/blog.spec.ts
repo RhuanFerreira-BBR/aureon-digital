@@ -1,6 +1,20 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
 import { cases } from '../src/lib/cases';
 import { blogPath, findBlogPost, legacyBlogRedirects, pairedBlogPath, posts } from '../src/lib/blog';
+
+const expectLocalSvgReferences = (svg: string) => {
+  for (const reference of svg.matchAll(/\b(?:href|src)\s*=\s*(["'])(.*?)\1/gi)) {
+    expect(reference[2].trim()).toMatch(/^#/);
+  }
+
+  expect(svg).not.toMatch(/@import/i);
+
+  for (const reference of svg.matchAll(/url\(\s*(["']?)(.*?)\1\s*\)/gi)) {
+    expect(reference[2].trim()).toMatch(/^#/);
+  }
+};
 
 test('blog catalog contains four complete bilingual acquisition articles', () => {
   expect(posts).toHaveLength(4);
@@ -74,4 +88,27 @@ test('blog route helpers preserve paired articles', () => {
   expect(conversion && blogPath(conversion, 'en')).toBe('/en/blog/website-conversion-strategy');
   expect(pairedBlogPath('/en/blog/seo-geo-ai-search', 'pt')).toBe('/blog/seo-geo-busca-ia');
   expect(pairedBlogPath('/about', 'en')).toBeNull();
+});
+
+test('blog artwork is local lightweight SVG', () => {
+  for (const { image } of posts) {
+    const path = resolve(process.cwd(), 'public', image.slice(1));
+    expect(existsSync(path)).toBeTruthy();
+    const svg = readFileSync(path, 'utf8');
+    expect(svg).toContain('<svg');
+    expect(svg).toContain('xmlns="http://www.w3.org/2000/svg"');
+    expect(svg).toContain('viewBox="0 0 1600 900"');
+    expect(Buffer.byteLength(svg)).toBeLessThan(40_000);
+    expectLocalSvgReferences(svg);
+  }
+});
+
+test('blog artwork reference policy rejects non-local resources', () => {
+  for (const unsafeSvg of [
+    '<image href="asset.png"/>',
+    '<image href="h&#116;tps://evil.test/a"/>',
+    '<style>@import "theme.css"</style>',
+  ]) {
+    expect(() => expectLocalSvgReferences(unsafeSvg)).toThrow();
+  }
 });

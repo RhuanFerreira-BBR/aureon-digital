@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="site-conversion-title site-conversion-desc">
+  <title id="site-conversion-title">A journey from discovery to action</title>
+  <desc id="site-conversion-desc">Three connected stages move through discovery, clarity and decision before reaching a highlighted action node.</desc>
+  <defs>
+    <pattern id="site-conversion-grid" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M80 0H0V80" fill="none" stroke="#d4a017" stroke-opacity=".14" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="#08090f"/>
+  <rect width="1600" height="900" fill="url(#site-conversion-grid)"/>
+  <path d="M0 720C320 580 580 760 860 590S1320 390 1600 480" fill="none" stroke="#E24A7A" stroke-opacity=".16" stroke-width="120"/>
+  <text x="120" y="145" fill="#d4a017" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="5">CONVERSION PATH</text>
+  <text x="120" y="215" fill="#f4f0e8" font-family="Arial, sans-serif" font-size="58" font-weight="700">Turn attention into action.</text>
+  <path d="M300 535H585M715 535h285m130 0h200" fill="none" stroke="#f4f0e8" stroke-opacity=".5" stroke-width="4"/>
+  <path d="m564 521 24 14-24 14m415-28 24 14-24 14m310-28 24 14-24 14" fill="none" stroke="#E24A7A" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <g fill="#08090f" stroke="#E24A7A" stroke-width="5">
+    <circle cx="235" cy="535" r="66"/>
+    <circle cx="650" cy="535" r="66"/>
+    <circle cx="1065" cy="535" r="66"/>
+  </g>
+  <g fill="#E24A7A" font-family="Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="2" text-anchor="middle">
+    <text x="235" y="541">01</text>
+    <text x="650" y="541">02</text>
+    <text x="1065" y="541">03</text>
+  </g>
+  <g fill="#f4f0e8" font-family="Arial, sans-serif" font-size="19" font-weight="700" letter-spacing="2" text-anchor="middle">
+    <text x="235" y="640">DISCOVERY</text>
+    <text x="650" y="640">CLARITY</text>
+    <text x="1065" y="640">DECISION</text>
+  </g>
+  <circle cx="1375" cy="535" r="90" fill="#E24A7A"/>
+  <circle cx="1375" cy="535" r="112" fill="none" stroke="#E24A7A" stroke-opacity=".35" stroke-width="3"/>
+  <path d="M1340 535h70m-23-23 23 23-23 23" fill="none" stroke="#08090f" stroke-linecap="round" stroke-linejoin="round" stroke-width="8"/>
+  <text x="1375" y="680" fill="#f4f0e8" font-family="Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="3" text-anchor="middle">ACTION</text>
+</svg>

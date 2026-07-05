@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="redesign-title redesign-desc">
+  <title id="redesign-title">A strategic path from old to new</title>
+  <desc id="redesign-desc">An old fragmented frame and a new focused frame are joined by a highlighted decision path.</desc>
+  <defs>
+    <pattern id="redesign-grid" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M80 0H0V80" fill="none" stroke="#d4a017" stroke-opacity=".14" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="#08090f"/>
+  <rect width="1600" height="900" fill="url(#redesign-grid)"/>
+  <text x="120" y="145" fill="#d4a017" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="5">STRATEGIC REDESIGN</text>
+  <text x="120" y="215" fill="#f4f0e8" font-family="Arial, sans-serif" font-size="58" font-weight="700">Rebuild only when the path is clear.</text>
+  <g fill="none" stroke="#f4f0e8" stroke-opacity=".45" stroke-width="3">
+    <rect x="130" y="350" width="410" height="330" rx="18"/>
+    <path d="M130 425h410M185 490h130v125H185zm170 0h130m-130 52h105m-105 52h78"/>
+  </g>
+  <g fill="#f4f0e8" fill-opacity=".38">
+    <circle cx="180" cy="388" r="8"/>
+    <circle cx="208" cy="388" r="8"/>
+    <circle cx="236" cy="388" r="8"/>
+  </g>
+  <text x="335" y="735" fill="#f4f0e8" fill-opacity=".58" font-family="Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="3" text-anchor="middle">OLD / FRICTION</text>
+  <path d="M540 515h145c62 0 53 102 115 102s53-102 115-102h145" fill="none" stroke="#E2A44A" stroke-linecap="round" stroke-width="8"/>
+  <circle cx="800" cy="617" r="72" fill="#08090f" stroke="#E2A44A" stroke-width="5"/>
+  <path d="m772 617 18 18 40-42" fill="none" stroke="#E2A44A" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
+  <text x="800" y="735" fill="#E2A44A" font-family="Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="3" text-anchor="middle">DECISION</text>
+  <rect x="1060" y="350" width="410" height="330" rx="18" fill="#E2A44A" fill-opacity=".08" stroke="#E2A44A" stroke-width="4"/>
+  <path d="M1060 425h410" stroke="#E2A44A" stroke-width="3"/>
+  <g fill="#E2A44A">
+    <circle cx="1110" cy="388" r="8"/>
+    <circle cx="1138" cy="388" r="8" fill-opacity=".65"/>
+    <circle cx="1166" cy="388" r="8" fill-opacity=".35"/>
+  </g>
+  <rect x="1120" y="480" width="290" height="48" rx="12" fill="#E2A44A"/>
+  <rect x="1120" y="560" width="190" height="18" rx="9" fill="#f4f0e8" fill-opacity=".75"/>
+  <rect x="1120" y="600" width="245" height="18" rx="9" fill="#f4f0e8" fill-opacity=".38"/>
+  <text x="1265" y="735" fill="#f4f0e8" font-family="Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="3" text-anchor="middle">NEW / FOCUS</text>
+</svg>
