@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
 import { cases } from '../src/lib/cases';
 import { blogPath, findBlogPost, legacyBlogRedirects, pairedBlogPath, posts } from '../src/lib/blog';
+import { splitParagraphLinks } from '../src/components/PostDetailPage';
 
 const expectLocalSvgReferences = (svg: string) => {
   for (const reference of svg.matchAll(/\b(?:href|src)\s*=\s*(["'])(.*?)\1/gi)) {
@@ -90,6 +91,40 @@ test('blog route helpers preserve paired articles', () => {
   expect(pairedBlogPath('/about', 'en')).toBeNull();
 });
 
+test('inline links follow text order and preserve the source paragraph', () => {
+  const text = 'Avary Drone vem antes de Celine Medspas.';
+  const segments = splitParagraphLinks(text, [
+    { label: 'Celine Medspas', caseId: 'celine' },
+    { label: 'Avary Drone', caseId: 'avary' },
+  ]);
+
+  expect(segments.map(segment => segment.text).join('')).toBe(text);
+  expect(segments.filter(segment => segment.kind === 'link').map(segment => segment.text)).toEqual([
+    'Avary Drone',
+    'Celine Medspas',
+  ]);
+});
+
+test('inline links ignore absent labels without changing text', () => {
+  const text = 'Texto sem o case solicitado.';
+  const segments = splitParagraphLinks(text, [{ label: 'Ausente', caseId: 'missing' }]);
+
+  expect(segments.map(segment => segment.text).join('')).toBe(text);
+  expect(segments.filter(segment => segment.kind === 'link')).toHaveLength(0);
+});
+
+test('repeated inline labels consume successive occurrences', () => {
+  const text = 'A A';
+  const segments = splitParagraphLinks(text, [
+    { label: 'A', caseId: 'first' },
+    { label: 'A', caseId: 'second' },
+  ]);
+  const linked = segments.filter(segment => segment.kind === 'link');
+
+  expect(segments.map(segment => segment.text).join('')).toBe(text);
+  expect(linked.map(segment => segment.caseId)).toEqual(['first', 'second']);
+});
+
 test('blog artwork is local lightweight SVG', () => {
   for (const { image } of posts) {
     const path = resolve(process.cwd(), 'public', image.slice(1));
@@ -111,4 +146,66 @@ test('blog artwork reference policy rejects non-local resources', () => {
   ]) {
     expect(() => expectLocalSvgReferences(unsafeSvg)).toThrow();
   }
+});
+
+test('both indexes render the acquisition hub', async ({ page }) => {
+  for (const route of ['/blog', '/en/blog']) {
+    await page.goto(route);
+    await expect(page.locator('[data-blog-card]')).toHaveCount(4);
+    await expect(page.locator('[data-blog-index-cta]')).toBeVisible();
+  }
+});
+
+test('article renders semantic conversion and trust blocks', async ({ page }) => {
+  await page.goto('/blog/site-que-converte');
+  await expect(page.locator('article')).toHaveCount(1);
+  await expect(page.locator('[data-blog-summary]')).toBeVisible();
+  await expect(page.locator('nav[aria-label="Neste artigo"] a')).toHaveCount(6);
+  await expect(page.locator('[data-blog-case="mini-finance-matcher-react"]')).toBeVisible();
+  await expect(page.locator('[data-blog-sources]')).toBeVisible();
+  const sourceBox = await page.locator('[data-blog-sources] a:visible').first().boundingBox();
+  expect(sourceBox).not.toBeNull();
+  expect(sourceBox?.height).toBeGreaterThanOrEqual(44);
+});
+
+test('unknown articles use a localized heading', async ({ page }) => {
+  for (const [route, heading] of [
+    ['/blog/desconhecido', 'Artigo não encontrado.'],
+    ['/en/blog/unknown', 'Article not found.'],
+  ] as const) {
+    await page.goto(route);
+    await expect(page.getByRole('heading', { level: 1, name: heading })).toBeVisible();
+  }
+});
+
+test('reduced motion disables smooth scrolling', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/blog');
+  expect(await page.locator('html').evaluate(element => getComputedStyle(element).scrollBehavior)).toBe('auto');
+});
+
+test('language selector preserves the article', async ({ page }) => {
+  const post = findBlogPost('seo-geo-busca-ia', 'pt');
+  expect(post).toBeDefined();
+  await page.goto('/blog/seo-geo-busca-ia');
+  await expect(page.getByRole('heading', { level: 1, name: post?.locales.pt.title })).toBeVisible();
+  const englishButton = page.getByRole('button', { name: 'EN', exact: true });
+  const englishBox = await englishButton.boundingBox();
+  expect(englishBox).not.toBeNull();
+  expect(englishBox?.width).toBeGreaterThanOrEqual(44);
+  expect(englishBox?.height).toBeGreaterThanOrEqual(44);
+  await englishButton.click();
+  await expect(page).toHaveURL(/\/en\/blog\/seo-geo-ai-search$/);
+  await expect(page.getByRole('heading', { level: 1, name: post?.locales.en.title })).toBeVisible();
+  const portugueseButton = page.getByRole('button', { name: 'PT', exact: true });
+  const portugueseBox = await portugueseButton.boundingBox();
+  expect(portugueseBox).not.toBeNull();
+  expect(portugueseBox?.width).toBeGreaterThanOrEqual(44);
+  expect(portugueseBox?.height).toBeGreaterThanOrEqual(44);
+  await portugueseButton.click();
+  await expect(page).toHaveURL(/\/blog\/seo-geo-busca-ia$/);
+  await expect(page.getByRole('heading', { level: 1, name: post?.locales.pt.title })).toBeVisible();
+
+  await page.goto('/en/blog/seo-geo-ai-search');
+  await expect(page.getByRole('heading', { level: 1, name: post?.locales.en.title })).toBeVisible();
 });

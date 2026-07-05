@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { BrandLogo } from "./BrandLogo";
+import { pairedBlogPath } from "../lib/blog";
 
 interface NavProps {
   lang: "en" | "pt";
@@ -133,6 +134,7 @@ export function Nav({ lang, setLang }: NavProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const { pathname: location } = useLocation();
+  const navigate = useNavigate();
   const servicesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -162,7 +164,15 @@ export function Nav({ lang, setLang }: NavProps) {
 
   const isHome = location === "/";
   const isCases = location.startsWith("/cases");
-  const isBlog = location.startsWith("/blog");
+  const isBlog = /^\/(?:en\/)?blog(?:\/|$)/.test(location);
+  const blogHref = lang === "en" ? "/en/blog" : "/blog";
+
+  function changeLanguage() {
+    const target = lang === "en" ? "pt" : "en";
+    const paired = pairedBlogPath(location, target);
+    if (paired) navigate(paired);
+    else setLang(target);
+  }
 
   return (
     <nav
@@ -223,7 +233,7 @@ export function Nav({ lang, setLang }: NavProps) {
             </Link>
 
             <Link
-              to="/blog"
+              to={blogHref}
               className={`nav-link ${isBlog ? "active" : ""}`}
               style={{ padding: "6px 12px", borderRadius: 4 }}
             >
@@ -251,10 +261,10 @@ export function Nav({ lang, setLang }: NavProps) {
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             {/* Lang */}
             <button
-              onClick={() => setLang(lang === "en" ? "pt" : "en")}
+              onClick={changeLanguage}
               style={{
                 background: "none", border: "1px solid rgba(212,160,23,0.2)",
-                borderRadius: 4, padding: "5px 11px",
+                borderRadius: 4, padding: "5px 11px", minWidth: 44, minHeight: 44,
                 color: "var(--text-muted)", fontSize: 11, fontWeight: 700,
                 letterSpacing: "0.1em", cursor: "pointer",
                 transition: "all 0.2s", fontFamily: "var(--font-display)",
@@ -323,7 +333,7 @@ export function Nav({ lang, setLang }: NavProps) {
           >
             {t[lang].cases}
           </Link>
-          <Link to="/blog" style={{ textDecoration: "none", padding: "12px 12px", borderRadius: 6, color: isBlog ? "var(--text)" : "var(--text-muted)", fontSize: 16, fontFamily: "var(--font-display)", fontWeight: 600, display: "block" }}
+          <Link to={blogHref} style={{ textDecoration: "none", padding: "12px 12px", borderRadius: 6, color: isBlog ? "var(--text)" : "var(--text-muted)", fontSize: 16, fontFamily: "var(--font-display)", fontWeight: 600, display: "block" }}
             onClick={() => setMenuOpen(false)}
           >
             {t[lang].blog}

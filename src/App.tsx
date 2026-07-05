@@ -13,7 +13,8 @@ import { Testimonials } from "./components/Testimonials";
 import { Contact } from "./components/Contact";
 import { CasesPage } from "./components/CasesPage";
 import { CaseDetailPage } from "./components/CaseDetailPage";
-import { BlogPage, PostDetailPage } from "./components/BlogPage";
+import { BlogPage } from "./components/BlogPage";
+import { PostDetailPage } from "./components/PostDetailPage";
 import { FaqPage } from "./pages/FaqPage";
 import { AboutPage } from "./pages/AboutPage";
 import { ServicesPage } from "./pages/ServicesPage";
@@ -45,7 +46,7 @@ function CaseDetailRoute({ lang }: { lang: Lang }) {
 
 function PostDetailRoute({ lang }: { lang: Lang }) {
   const { id = "" } = useParams();
-  return <PostDetailPage lang={lang} id={id} />;
+  return <PostDetailPage lang={lang} slug={id} />;
 }
 
 function ScrollProgress() {
@@ -80,10 +81,22 @@ function CursorGlow() {
 export default function App() {
   const [lang, setLang] = useState<Lang>("pt");
   const { pathname, hash } = useLocation();
+  const blogLang: Lang | null = /^\/en\/blog(?:\/|$)/.test(pathname)
+    ? "en"
+    : /^\/blog(?:\/|$)/.test(pathname)
+      ? "pt"
+      : null;
+  const activeLang = blogLang ?? lang;
 
   useEffect(() => {
-    applyPageMeta(pathname, lang);
-  }, [pathname, lang]);
+    if (!blogLang || blogLang === lang) return;
+    const id = window.setTimeout(() => setLang(blogLang), 0);
+    return () => window.clearTimeout(id);
+  }, [blogLang, lang]);
+
+  useEffect(() => {
+    applyPageMeta(pathname, activeLang);
+  }, [pathname, activeLang]);
 
   useEffect(() => {
     if (hash) {
@@ -100,20 +113,22 @@ export default function App() {
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--void)" }}>
       <ScrollProgress />
       <CursorGlow />
-      <Nav lang={lang} setLang={setLang} />
+      <Nav lang={activeLang} setLang={setLang} />
 
       <div style={{ flex: 1 }}>
         <Routes>
-          <Route path="/" element={<HomePage lang={lang} />} />
-          <Route path="/cases" element={<CasesPage lang={lang} />} />
-          <Route path="/cases/:id" element={<CaseDetailRoute lang={lang} />} />
-          <Route path="/blog" element={<BlogPage lang={lang} />} />
-          <Route path="/blog/:id" element={<PostDetailRoute lang={lang} />} />
-          <Route path="/faq" element={<FaqPage lang={lang} />} />
-          <Route path="/about" element={<AboutPage lang={lang} />} />
-          <Route path="/services" element={<ServicesPage lang={lang} />} />
-          <Route path="/privacy" element={<PrivacyPage lang={lang} />} />
-          <Route path="/terms" element={<TermsPage lang={lang} />} />
+          <Route path="/" element={<HomePage lang={activeLang} />} />
+          <Route path="/cases" element={<CasesPage lang={activeLang} />} />
+          <Route path="/cases/:id" element={<CaseDetailRoute lang={activeLang} />} />
+          <Route path="/blog" element={<BlogPage lang="pt" />} />
+          <Route path="/blog/:id" element={<PostDetailRoute lang="pt" />} />
+          <Route path="/en/blog" element={<BlogPage lang="en" />} />
+          <Route path="/en/blog/:id" element={<PostDetailRoute lang="en" />} />
+          <Route path="/faq" element={<FaqPage lang={activeLang} />} />
+          <Route path="/about" element={<AboutPage lang={activeLang} />} />
+          <Route path="/services" element={<ServicesPage lang={activeLang} />} />
+          <Route path="/privacy" element={<PrivacyPage lang={activeLang} />} />
+          <Route path="/terms" element={<TermsPage lang={activeLang} />} />
           <Route
             path="*"
             element={
@@ -126,7 +141,7 @@ export default function App() {
         </Routes>
       </div>
 
-      <Footer lang={lang} />
+      <Footer lang={activeLang} />
     </div>
   );
 }
