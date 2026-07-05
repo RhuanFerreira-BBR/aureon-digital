@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
 import { cases } from '../src/lib/cases';
-import { blogPath, findBlogPost, legacyBlogRedirects, pairedBlogPath, posts } from '../src/lib/blog';
+import { blogIndexPath, blogPath, findBlogPost, legacyBlogRedirects, pairedBlogPath, posts } from '../src/lib/blog';
 import { resolvePageMeta } from '../src/lib/seo';
 import { splitParagraphLinks } from '../src/components/PostDetailPage';
 
@@ -18,6 +18,22 @@ const expectLocalSvgReferences = (svg: string) => {
     expect(reference[2].trim()).toMatch(/^#/);
   }
 };
+
+const blogLanguages = ['pt', 'en'] as const;
+const staticBlogPages = blogLanguages.flatMap(lang => [
+  { route: blogIndexPath(lang), lang, article: false },
+  ...posts.map(post => ({ route: blogPath(post, lang), lang, article: true })),
+]);
+const approvedBlogPermalinks = [
+  '/blog/site-que-converte',
+  '/blog/seo-geo-busca-ia',
+  '/blog/performance-core-web-vitals',
+  '/blog/quando-redesenhar-site',
+  '/en/blog/website-conversion-strategy',
+  '/en/blog/seo-geo-ai-search',
+  '/en/blog/performance-core-web-vitals',
+  '/en/blog/when-to-redesign-website',
+] as const;
 
 test('blog catalog contains four complete bilingual acquisition articles', () => {
   expect(posts).toHaveLength(4);
@@ -87,6 +103,7 @@ test('blog redirects and redesign case links match the approved destinations', (
 });
 
 test('blog route helpers preserve paired articles', () => {
+  expect(staticBlogPages.filter(({ article }) => article).map(({ route }) => route)).toEqual(approvedBlogPermalinks);
   const conversion = findBlogPost('site-que-converte', 'pt');
   expect(conversion && blogPath(conversion, 'en')).toBe('/en/blog/website-conversion-strategy');
   expect(pairedBlogPath('/en/blog/seo-geo-ai-search', 'pt')).toBe('/blog/seo-geo-busca-ia');
@@ -154,21 +171,46 @@ test('sitemap matches both localized blog catalogs', async () => {
   expect(xml).not.toContain('geo-vs-seo-2025');
 });
 
-test('root build emits article heads and legacy redirect documents', async () => {
-  const html = await readFile(join(process.cwd(), 'dist/en/blog/seo-geo-ai-search/index.html'), 'utf8');
-  expect(html).toContain('hreflang="pt-BR"');
-  expect(html).toContain('id="article-jsonld"');
+test('root build emits complete localized static blog heads', async () => {
+  for (const { route, lang, article } of staticBlogPages) {
+    const path = join(process.cwd(), 'dist', route.slice(1), 'index.html');
+    const meta = resolvePageMeta(route, lang);
+    expect(existsSync(path), path).toBeTruthy();
 
-  const redirect = await readFile(join(process.cwd(), 'dist/blog/geo-vs-seo-2025/index.html'), 'utf8');
-  expect(redirect).toContain('url=/blog/seo-geo-busca-ia');
+    const html = await readFile(path, 'utf8');
+    expect(html).toContain(`<html lang="${lang === 'pt' ? 'pt-BR' : 'en'}">`);
+    expect(html).toContain(`<link rel="canonical" href="${meta.canonical}" />`);
+    expect(html.match(/data-aureon-hreflang/g)).toHaveLength(3);
+    expect(html.includes('id="article-jsonld"')).toBe(article);
+  }
 });
 
-test('Hostinger permanent redirects precede the SPA fallback', async () => {
-  const value = await readFile(join(process.cwd(), 'public/.htaccess'), 'utf8');
-  const redirect = 'Redirect 301 /blog/geo-vs-seo-2025 /blog/seo-geo-busca-ia';
+test('build emits every legacy redirect before the SPA fallback', async () => {
+  for (const htaccessPath of [
+    join(process.cwd(), 'public/.htaccess'),
+    join(process.cwd(), 'dist/.htaccess'),
+  ]) {
+    const value = await readFile(htaccessPath, 'utf8');
+    const fallbackIndex = value.indexOf('RewriteRule . /index.html [L]');
+    expect(fallbackIndex, htaccessPath).toBeGreaterThanOrEqual(0);
 
-  expect(value.indexOf(redirect)).toBeGreaterThanOrEqual(0);
-  expect(value.indexOf(redirect)).toBeLessThan(value.indexOf('RewriteRule . /index.html [L]'));
+    for (const [route, target] of Object.entries(legacyBlogRedirects)) {
+      const redirectIndex = value.indexOf(`Redirect 301 ${route} ${target}`);
+      expect(redirectIndex, `${htaccessPath}: ${route}`).toBeGreaterThanOrEqual(0);
+      expect(redirectIndex, `${htaccessPath}: ${route}`).toBeLessThan(fallbackIndex);
+    }
+  }
+
+  const builtIndex = await readFile(join(process.cwd(), 'dist/index.html'), 'utf8');
+  const assetPrefix = builtIndex.match(/(?:href|src)="(\/(?:horizon-collective\/)?assets\/)[^"]+"/)?.[1];
+  expect(['/assets/', '/horizon-collective/assets/']).toContain(assetPrefix);
+  const outputBase = assetPrefix === '/horizon-collective/assets/' ? '/horizon-collective' : '';
+  for (const [route, target] of Object.entries(legacyBlogRedirects)) {
+    const html = await readFile(join(process.cwd(), 'dist', route.slice(1), 'index.html'), 'utf8');
+    expect(html).toContain('<meta name="robots" content="noindex,follow" />');
+    expect(html).toContain(`<meta http-equiv="refresh" content="0;url=${outputBase}${target}" />`);
+    expect(html).toContain(`<link rel="canonical" href="https://aureondigital.co${target}" />`);
+  }
 });
 
 test('Pages subpath blog media resolves', async ({ page }) => {
@@ -179,8 +221,10 @@ test('Pages subpath blog media resolves', async ({ page }) => {
   await expect(image).toHaveAttribute('src', '/horizon-collective/blog/seo-geo.svg');
   expect(await image.evaluate(element => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
 
-  const redirect = await readFile(join(process.cwd(), 'dist/blog/geo-vs-seo-2025/index.html'), 'utf8');
-  expect(redirect).toContain('url=/horizon-collective/blog/seo-geo-busca-ia');
+  for (const [route, target] of Object.entries(legacyBlogRedirects)) {
+    const redirect = await readFile(join(process.cwd(), 'dist', route.slice(1), 'index.html'), 'utf8');
+    expect(redirect).toContain(`content="0;url=/horizon-collective${target}"`);
+  }
 });
 
 test('inline links follow text order and preserve the source paragraph', () => {
@@ -248,6 +292,35 @@ test('both indexes render the acquisition hub', async ({ page }) => {
   }
 });
 
+for (const route of approvedBlogPermalinks) {
+  test(`blog route ${route} renders complete local content`, async ({ page }) => {
+    await page.goto(route);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(page.locator('article h2')).toHaveCount(6);
+    await expect(page.locator('[data-blog-sources] a')).not.toHaveCount(0);
+    const image = page.locator('.blog-article-hero img');
+    await expect(image).toHaveJSProperty('complete', true);
+    expect(await image.evaluate(element => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  });
+}
+
+for (const route of ['/blog', '/en/blog', '/blog/site-que-converte', '/en/blog/seo-geo-ai-search']) {
+  test(`mobile blog route ${route} fits`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(route);
+    expect(await page.evaluate(
+      () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+    )).toBeTruthy();
+    const ctas = page.locator('a[data-blog-cta]');
+    await expect(ctas).toHaveCount(route === '/blog' || route === '/en/blog' ? 1 : 2);
+    for (const cta of await ctas.all()) {
+      const box = await cta.boundingBox();
+      expect(box).not.toBeNull();
+      expect(box?.height).toBeGreaterThanOrEqual(44);
+    }
+  });
+}
+
 test('article renders semantic conversion and trust blocks', async ({ page }) => {
   await page.goto('/blog/site-que-converte');
   await expect(page.locator('article')).toHaveCount(1);
@@ -270,10 +343,13 @@ test('unknown articles use a localized heading', async ({ page }) => {
   }
 });
 
-test('reduced motion disables smooth scrolling', async ({ page }) => {
+test('reduced motion keeps every blog card visible', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/blog');
-  expect(await page.locator('html').evaluate(element => getComputedStyle(element).scrollBehavior)).toBe('auto');
+  const cards = page.locator('[data-blog-card]');
+  await expect(cards).toHaveCount(4);
+  for (const card of await cards.all()) await expect(card).toBeVisible();
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe('auto');
 });
 
 test('language selector preserves the article', async ({ page }) => {
@@ -342,7 +418,7 @@ test('article metadata is removed after leaving the blog', async ({ page }) => {
   await page.goto('/blog/site-que-converte');
   await expect(page.locator('link[data-aureon-hreflang]')).toHaveCount(3);
   await expect(page.locator('script#article-jsonld')).toHaveCount(1);
-  await page.locator('.desktop-nav').getByRole('link', { name: 'Sobre', exact: true }).click();
+  await page.getByRole('contentinfo').getByRole('link', { name: 'Sobre', exact: true }).click();
   await expect(page).toHaveURL(/\/about$/);
   await expect(page.locator('link[data-aureon-hreflang]')).toHaveCount(0);
   await expect(page.locator('script#article-jsonld')).toHaveCount(0);
