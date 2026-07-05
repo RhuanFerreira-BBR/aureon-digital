@@ -113,7 +113,7 @@ test('Pages workflow tests subpath media after building its dist', async () => {
 
   expect(build).toBeGreaterThan(-1);
   expect(pagesTest).toBeGreaterThan(build);
-  expect(workflow.indexOf('npx playwright test tests/smoke.spec.ts -g "Pages subpath case media" --project=chromium-desktop --workers=1')).toBeGreaterThan(pagesTest);
+  expect(workflow.indexOf('npx playwright test tests/smoke.spec.ts tests/blog.spec.ts -g "Pages subpath" --project=chromium-desktop --workers=1')).toBeGreaterThan(pagesTest);
 });
 
 test('real case metadata is indexable and uses local social media', async ({ page }) => {

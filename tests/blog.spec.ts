@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
 import { cases } from '../src/lib/cases';
 import { blogPath, findBlogPost, legacyBlogRedirects, pairedBlogPath, posts } from '../src/lib/blog';
@@ -135,6 +136,51 @@ test('localized blog indexes have paired canonicals', () => {
     xDefault: 'https://aureondigital.co/blog',
   });
   expect(meta.type).toBe('website');
+});
+
+test('sitemap matches both localized blog catalogs', async () => {
+  const xml = await readFile(join(process.cwd(), 'public/sitemap.xml'), 'utf8');
+  const urls = [...xml.matchAll(/<loc>(https:\/\/aureondigital\.co\/(?:en\/)?blog[^<]*)<\/loc>/g)]
+    .map(([, url]) => url);
+
+  expect(urls).toEqual([
+    'https://aureondigital.co/blog',
+    'https://aureondigital.co/en/blog',
+    ...posts.flatMap(post => [
+      `https://aureondigital.co${blogPath(post, 'pt')}`,
+      `https://aureondigital.co${blogPath(post, 'en')}`,
+    ]),
+  ]);
+  expect(xml).not.toContain('geo-vs-seo-2025');
+});
+
+test('root build emits article heads and legacy redirect documents', async () => {
+  const html = await readFile(join(process.cwd(), 'dist/en/blog/seo-geo-ai-search/index.html'), 'utf8');
+  expect(html).toContain('hreflang="pt-BR"');
+  expect(html).toContain('id="article-jsonld"');
+
+  const redirect = await readFile(join(process.cwd(), 'dist/blog/geo-vs-seo-2025/index.html'), 'utf8');
+  expect(redirect).toContain('url=/blog/seo-geo-busca-ia');
+});
+
+test('Hostinger permanent redirects precede the SPA fallback', async () => {
+  const value = await readFile(join(process.cwd(), 'public/.htaccess'), 'utf8');
+  const redirect = 'Redirect 301 /blog/geo-vs-seo-2025 /blog/seo-geo-busca-ia';
+
+  expect(value.indexOf(redirect)).toBeGreaterThanOrEqual(0);
+  expect(value.indexOf(redirect)).toBeLessThan(value.indexOf('RewriteRule . /index.html [L]'));
+});
+
+test('Pages subpath blog media resolves', async ({ page }) => {
+  test.skip(process.env.GITHUB_PAGES !== 'true', 'requires the GitHub Pages build');
+
+  await page.goto('/horizon-collective/en/blog/seo-geo-ai-search');
+  const image = page.locator('.blog-article-hero img');
+  await expect(image).toHaveAttribute('src', '/horizon-collective/blog/seo-geo.svg');
+  expect(await image.evaluate(element => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+
+  const redirect = await readFile(join(process.cwd(), 'dist/blog/geo-vs-seo-2025/index.html'), 'utf8');
+  expect(redirect).toContain('url=/horizon-collective/blog/seo-geo-busca-ia');
 });
 
 test('inline links follow text order and preserve the source paragraph', () => {

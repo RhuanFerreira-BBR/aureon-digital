@@ -128,7 +128,7 @@ jobs:
       - name: Test GitHub Pages subpath
         env:
           GITHUB_PAGES: 'true'
-        run: npx playwright test tests/smoke.spec.ts -g "Pages subpath case media" --project=chromium-desktop --workers=1
+        run: npx playwright test tests/smoke.spec.ts tests/blog.spec.ts -g "Pages subpath" --project=chromium-desktop --workers=1
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

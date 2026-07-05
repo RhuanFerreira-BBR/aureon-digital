@@ -1,3 +1,7 @@
+Redirect 301 /blog/geo-vs-seo-2025 /blog/seo-geo-busca-ia
+Redirect 301 /blog/web-design-conversion-2025 /blog/site-que-converte
+Redirect 301 /blog/seo-technical-fundamentals /blog/performance-core-web-vitals
+Redirect 301 /blog/smb-digital-strategy-brazil /blog/quando-redesenhar-site
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
