@@ -82,7 +82,7 @@ function redirectHtml(target: string, base: string) {
 let outputBase = '/';
 
 export default defineConfig({
-  base: process.env.GITHUB_PAGES === 'true' ? '/horizon-collective/' : '/',
+  base: process.env.GITHUB_PAGES === 'true' ? '/aureon-digital/' : '/',
   plugins: [
     react(),
     {

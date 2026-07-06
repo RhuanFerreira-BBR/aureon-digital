@@ -1,5 +1,5 @@
 {
-  "name": "horizon-collective",
+  "name": "aureon-digital",
   "version": "1.0.0",
   "private": true,
   "description": "React + TypeScript website for AUREON.",
@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:pages": "tsc -b && vite build --base=/horizon-collective/",
+    "build:pages": "tsc -b && vite build --base=/aureon-digital/",
     "capture:cases": "node scripts/capture-case-assets.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RhuanFerreira-BBR/horizon-collective.git"
+    "url": "git+https://github.com/RhuanFerreira-BBR/aureon-digital.git"
   },
   "keywords": [
     "react",
@@ -28,9 +28,9 @@
   "author": "AUREON",
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/RhuanFerreira-BBR/horizon-collective/issues"
+    "url": "https://github.com/RhuanFerreira-BBR/aureon-digital/issues"
   },
-  "homepage": "https://github.com/RhuanFerreira-BBR/horizon-collective#readme",
+  "homepage": "https://github.com/RhuanFerreira-BBR/aureon-digital#readme",
   "dependencies": {
     "react": "^19.2.7",
     "react-dom": "^19.2.7",

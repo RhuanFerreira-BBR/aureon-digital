@@ -402,9 +402,9 @@ Add four `Redirect 301` lines before `RewriteEngine On`, mapping the old slugs e
 ```ts
 test('Pages subpath blog media resolves', async ({ page }) => {
   test.skip(process.env.GITHUB_PAGES !== 'true');
-  await page.goto('/horizon-collective/en/blog/seo-geo-ai-search');
+  await page.goto('/aureon-digital/en/blog/seo-geo-ai-search');
   const image = page.locator('.blog-article-hero img');
-  await expect(image).toHaveAttribute('src', '/horizon-collective/blog/seo-geo.svg');
+  await expect(image).toHaveAttribute('src', '/aureon-digital/blog/seo-geo.svg');
   expect(await image.evaluate(element => element.naturalWidth)).toBeGreaterThan(0);
 });
 ```

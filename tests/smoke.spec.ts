@@ -72,37 +72,37 @@ test('portfolio case catalog is complete and internally valid', () => {
 
 test('case media URLs support root and GitHub Pages bases', () => {
   expect(caseMediaUrl('/cases/dove-global-aem/hero.jpg', '/')).toBe('/cases/dove-global-aem/hero.jpg');
-  expect(caseMediaUrl('/cases/dove-global-aem/hero.jpg', '/horizon-collective/')).toBe(
-    '/horizon-collective/cases/dove-global-aem/hero.jpg',
+  expect(caseMediaUrl('/cases/dove-global-aem/hero.jpg', '/aureon-digital/')).toBe(
+    '/aureon-digital/cases/dove-global-aem/hero.jpg',
   );
 });
 
 test('Pages subpath case media', async ({ page }) => {
   test.skip(process.env.GITHUB_PAGES !== 'true', 'requires the GitHub Pages build');
 
-  await page.goto('/horizon-collective/cases/dove-global-aem');
+  await page.goto('/aureon-digital/cases/dove-global-aem');
   const hero = page.locator('.portfolio-case-hero-image img');
-  await expect(hero).toHaveAttribute('src', '/horizon-collective/cases/dove-global-aem/hero.jpg');
+  await expect(hero).toHaveAttribute('src', '/aureon-digital/cases/dove-global-aem/hero.jpg');
   expect(await hero.evaluate(image => image.naturalWidth)).toBeGreaterThan(0);
 
   const heroResponse = await page.request.get(await hero.getAttribute('src') as string);
   expect(heroResponse.status()).toBe(200);
 
   const gallery = page.locator('.portfolio-case-gallery img');
-  await expect(gallery).toHaveAttribute('src', '/horizon-collective/cases/dove-global-aem/mobile.jpg');
+  await expect(gallery).toHaveAttribute('src', '/aureon-digital/cases/dove-global-aem/mobile.jpg');
   expect(await gallery.evaluate(image => image.naturalWidth)).toBeGreaterThan(0);
 
   const galleryResponse = await page.request.get(await gallery.getAttribute('src') as string);
   expect(galleryResponse.status()).toBe(200);
 
-  await page.goto('/horizon-collective/');
+  await page.goto('/aureon-digital/');
   const preview = page.locator('[data-case-preview]').filter({ hasText: 'Dove' }).locator('img');
-  await expect(preview).toHaveAttribute('src', '/horizon-collective/cases/dove-global-aem/hero.jpg');
+  await expect(preview).toHaveAttribute('src', '/aureon-digital/cases/dove-global-aem/hero.jpg');
   expect(await preview.evaluate(image => image.naturalWidth)).toBeGreaterThan(0);
 
-  await page.goto('/horizon-collective/cases');
+  await page.goto('/aureon-digital/cases');
   const card = page.locator('[data-case-card]').filter({ hasText: 'Dove' }).locator('img');
-  await expect(card).toHaveAttribute('src', '/horizon-collective/cases/dove-global-aem/hero.jpg');
+  await expect(card).toHaveAttribute('src', '/aureon-digital/cases/dove-global-aem/hero.jpg');
   expect(await card.evaluate(image => image.naturalWidth)).toBeGreaterThan(0);
 });
 

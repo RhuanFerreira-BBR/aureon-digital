@@ -202,9 +202,9 @@ test('build emits every legacy redirect before the SPA fallback', async () => {
   }
 
   const builtIndex = await readFile(join(process.cwd(), 'dist/index.html'), 'utf8');
-  const assetPrefix = builtIndex.match(/(?:href|src)="(\/(?:horizon-collective\/)?assets\/)[^"]+"/)?.[1];
-  expect(['/assets/', '/horizon-collective/assets/']).toContain(assetPrefix);
-  const outputBase = assetPrefix === '/horizon-collective/assets/' ? '/horizon-collective' : '';
+  const assetPrefix = builtIndex.match(/(?:href|src)="(\/(?:aureon-digital\/)?assets\/)[^"]+"/)?.[1];
+  expect(['/assets/', '/aureon-digital/assets/']).toContain(assetPrefix);
+  const outputBase = assetPrefix === '/aureon-digital/assets/' ? '/aureon-digital' : '';
   for (const [route, target] of Object.entries(legacyBlogRedirects)) {
     const html = await readFile(join(process.cwd(), 'dist', route.slice(1), 'index.html'), 'utf8');
     expect(html).toContain('<meta name="robots" content="noindex,follow" />');
@@ -216,14 +216,14 @@ test('build emits every legacy redirect before the SPA fallback', async () => {
 test('Pages subpath blog media resolves', async ({ page }) => {
   test.skip(process.env.GITHUB_PAGES !== 'true', 'requires the GitHub Pages build');
 
-  await page.goto('/horizon-collective/en/blog/seo-geo-ai-search');
+  await page.goto('/aureon-digital/en/blog/seo-geo-ai-search');
   const image = page.locator('.blog-article-hero img');
-  await expect(image).toHaveAttribute('src', '/horizon-collective/blog/seo-geo.svg');
+  await expect(image).toHaveAttribute('src', '/aureon-digital/blog/seo-geo.svg');
   expect(await image.evaluate(element => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
 
   for (const [route, target] of Object.entries(legacyBlogRedirects)) {
     const redirect = await readFile(join(process.cwd(), 'dist', route.slice(1), 'index.html'), 'utf8');
-    expect(redirect).toContain(`content="0;url=/horizon-collective${target}"`);
+    expect(redirect).toContain(`content="0;url=/aureon-digital${target}"`);
   }
 });
 
