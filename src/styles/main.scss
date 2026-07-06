@@ -423,8 +423,12 @@ h1,h2,h3,h4,h5,h6 { font-family: var(--font-display); font-weight: 700; line-hei
 
 @media (max-width: 767px) {
   .case-page-hero-grid {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: minmax(0, 1fr) !important;
     gap: 48px !important;
+  }
+
+  .case-page-hero-grid > * {
+    min-width: 0;
   }
 
   .glow-dot {

@@ -542,9 +542,16 @@ test('mobile case summary and metadata fit the viewport', async ({ page }) => {
   await expect(heroGrid).toHaveCount(1);
   expect(await heroGrid.evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(' ').length)).toBe(1);
 
-  const reachMetric = page.locator('.case-page-metrics').getByText('Global + local', { exact: true });
+  const metrics = page.locator('.case-page-metrics');
+  const reachMetric = metrics.getByText('Global + local', { exact: true });
+  await expect(metrics).toHaveCSS('display', 'grid');
+  expect(await reachMetric.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBeTruthy();
+  const metricsBox = await metrics.boundingBox();
   const reachBox = await reachMetric.boundingBox();
-  expect((reachBox?.x ?? 390) + (reachBox?.width ?? 0)).toBeLessThanOrEqual(366);
+  expect((reachBox?.x ?? 390) + (reachBox?.width ?? 0)).toBeLessThanOrEqual(
+    (metricsBox?.x ?? 0) + (metricsBox?.width ?? 0) + 1,
+  );
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)).toBeTruthy();
 
   await page.goto('/cases/dove-global-aem');
   const metadata = page.locator('.portfolio-case-meta');
