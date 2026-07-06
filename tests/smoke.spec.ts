@@ -538,6 +538,10 @@ test('mobile case summary and metadata fit the viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/cases');
 
+  const heroGrid = page.locator('.case-page-hero-grid');
+  await expect(heroGrid).toHaveCount(1);
+  expect(await heroGrid.evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(' ').length)).toBe(1);
+
   const reachMetric = page.locator('.case-page-metrics').getByText('Global + local', { exact: true });
   const reachBox = await reachMetric.boundingBox();
   expect((reachBox?.x ?? 390) + (reachBox?.width ?? 0)).toBeLessThanOrEqual(366);

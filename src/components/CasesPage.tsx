@@ -93,7 +93,7 @@ export function CasesPage({ lang }: CasesPageProps) {
             <span style={{ fontSize: 12, color: "var(--gold)", fontWeight: 600 }}>{t[lang].label}</span>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "end" }}>
+          <div className="case-page-hero-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "end" }}>
             <div>
               <div className="section-label reveal">{t[lang].label}</div>
               <h1 className="reveal" style={{ fontSize: "clamp(48px, 6vw, 80px)", lineHeight: 1.0, marginBottom: 0 }}>
