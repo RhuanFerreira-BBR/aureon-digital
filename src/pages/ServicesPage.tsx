@@ -27,7 +27,7 @@ const t = {
           "Post-launch support",
         ],
         ideal: "Startups, local businesses, and established companies that want to stop losing customers to a mediocre online presence.",
-        price: "From R$3,000",
+        price: "From R$5,000",
       },
       {
         id: "seo",
@@ -46,7 +46,7 @@ const t = {
           "Competitor gap analysis",
         ],
         ideal: "Businesses tired of paying for ads and ready to build a traffic source they actually own.",
-        price: "From R$1,800/month",
+        price: "From R$3,000/month",
       },
       {
         id: "geo",
@@ -65,7 +65,7 @@ const t = {
           "Monthly GEO performance report",
         ],
         ideal: "Forward-thinking businesses who understand that the future of search is AI-mediated and want to be ahead of competitors.",
-        price: "From R$2,200/month",
+        price: "From R$3,500/month",
       },
     ],
     processTitle: "How it works",
@@ -101,7 +101,7 @@ const t = {
           "Suporte pós-lançamento",
         ],
         ideal: "Startups, negócios locais e empresas estabelecidas que querem parar de perder clientes para uma presença online medíocre.",
-        price: "A partir de R$3.000",
+        price: "A partir de R$5.000",
       },
       {
         id: "seo",
@@ -120,7 +120,7 @@ const t = {
           "Análise de gaps de concorrentes",
         ],
         ideal: "Negócios cansados de pagar por anúncios e prontos para construir uma fonte de tráfego que realmente possuem.",
-        price: "A partir de R$1.800/mês",
+        price: "A partir de R$3.000/mês",
       },
       {
         id: "geo",
@@ -139,7 +139,7 @@ const t = {
           "Relatório mensal de performance GEO",
         ],
         ideal: "Negócios visionários que entendem que o futuro da busca é mediado por IA e querem estar à frente dos concorrentes.",
-        price: "A partir de R$2.200/mês",
+        price: "A partir de R$3.500/mês",
       },
     ],
     processTitle: "Como funciona",

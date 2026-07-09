@@ -260,9 +260,7 @@ test('AEM case discloses attribution and estimated impact', async ({ page }) => 
   await expect(page.getByRole('heading', { level: 1 })).toContainText('beleza real');
   await expect(page.getByText('Trabalho realizado em equipe via agência parceira para a Unilever.', { exact: true })).toBeVisible();
   await expect(page.getByText('Impacto indicativo — estimativas não auditadas', { exact: true })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Visitar website' })).toHaveAttribute('href', 'https://www.dove.com/us/en/home.html');
-  await expect(page.getByRole('link', { name: 'Visitar website' })).toHaveAttribute('target', '_blank');
-  await expect(page.getByRole('link', { name: 'Visitar website' })).toHaveAttribute('rel', 'noopener noreferrer');
+  await expect(page.getByRole('link', { name: 'Visitar website' })).toHaveCount(0);
   await expect(page.locator('.portfolio-case-attribution')).toHaveCSS('color', 'rgb(138, 145, 184)');
   await expect(page.locator('.portfolio-case-impact-grid small').first()).toHaveCSS('color', 'rgb(138, 145, 184)');
 });
@@ -574,9 +572,17 @@ for (const slug of [
     await expect(page.locator('.portfolio-case-meta')).toBeVisible();
     await expect(page.locator('.portfolio-case-gallery')).toBeVisible();
     await expect(page.locator('.portfolio-case-impact')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Visitar website' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Visitar website' })).toHaveCount(0);
   });
 }
+
+test('services page shows updated entry prices', async ({ page }) => {
+  await page.goto('/services');
+
+  await expect(page.getByText('A partir de R$5.000', { exact: true })).toBeVisible();
+  await expect(page.getByText('A partir de R$3.000/mês', { exact: true })).toBeVisible();
+  await expect(page.getByText('A partir de R$3.500/mês', { exact: true })).toBeVisible();
+});
 
 for (const width of [390, 768, 991, 992]) {
   test(`top navigation controls fit at ${width}px`, async ({ page }) => {

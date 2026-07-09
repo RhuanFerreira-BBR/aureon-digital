@@ -301,7 +301,8 @@ for (const route of approvedBlogPermalinks) {
     await page.goto(route);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(page.locator('article h2')).toHaveCount(6);
-    await expect(page.locator('[data-blog-sources] a')).not.toHaveCount(0);
+    await expect(page.locator('[data-blog-sources] li')).not.toHaveCount(0);
+    await expect(page.locator('[data-blog-sources] a')).toHaveCount(0);
     const image = page.locator('.blog-article-hero img');
     await expect(image).toHaveJSProperty('complete', true);
     expect(await image.evaluate(element => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
@@ -332,9 +333,10 @@ test('article renders semantic conversion and trust blocks', async ({ page }) =>
   await expect(page.locator('nav[aria-label="Neste artigo"] a')).toHaveCount(6);
   await expect(page.locator('[data-blog-case="mini-finance-matcher-react"]')).toBeVisible();
   await expect(page.locator('[data-blog-sources]')).toBeVisible();
-  const sourceBox = await page.locator('[data-blog-sources] a:visible').first().boundingBox();
+  await expect(page.locator('[data-blog-sources] a')).toHaveCount(0);
+  const sourceBox = await page.locator('[data-blog-sources] li:visible').first().boundingBox();
   expect(sourceBox).not.toBeNull();
-  expect(sourceBox?.height).toBeGreaterThanOrEqual(44);
+  expect(sourceBox?.height).toBeGreaterThan(0);
 });
 
 test('mobile table of contents precedes the article body and stays sticky on desktop', async ({ page }) => {

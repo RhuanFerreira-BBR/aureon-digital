@@ -154,7 +154,7 @@ export function PostDetailPage({ lang, slug }: { lang: BlogLang; slug: string })
               <ul>
                 {post.sources.map(source => (
                   <li key={source.url}>
-                    <a aria-label={`${source.label} — ${copy[lang].sourceLink}`} href={source.url} rel="noopener noreferrer" target="_blank">{source.label}</a>
+                    <span>{source.label}</span>
                   </li>
                 ))}
               </ul>

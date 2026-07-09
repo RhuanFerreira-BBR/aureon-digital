@@ -106,9 +106,6 @@ export function CaseDetailPage({ lang, id }: { lang: Lang; id: string }) {
             <p className="portfolio-case-kicker"><span>{item.client}</span> · {item.platform} · {caseText(item.market, lang)}</p>
             <h1>{caseText(item.title, lang)}</h1>
             <p className="portfolio-case-summary">{caseText(item.summary, lang)}</p>
-            <a className="btn-gold" href={item.sourceUrl} target="_blank" rel="noopener noreferrer">
-              {copy[lang].visit}
-            </a>
             {item.attribution && <p className="portfolio-case-attribution">{caseText(item.attribution, lang)}</p>}
           </div>
         </header>
