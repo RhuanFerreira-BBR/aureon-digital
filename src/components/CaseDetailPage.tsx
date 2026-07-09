@@ -8,7 +8,6 @@ type Lang = "pt" | "en";
 const copy = {
   pt: {
     back: "← Voltar para Cases",
-    visit: "Visitar website",
     platform: "Plataforma",
     scope: "Escopo",
     market: "Mercado",
@@ -27,7 +26,6 @@ const copy = {
   },
   en: {
     back: "← Back to Cases",
-    visit: "Visit website",
     platform: "Platform",
     scope: "Scope",
     market: "Market",

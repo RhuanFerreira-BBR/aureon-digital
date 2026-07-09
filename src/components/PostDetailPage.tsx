@@ -15,7 +15,6 @@ const copy = {
     updated: "Atualizado em",
     next: "Próximo artigo",
     notFound: "Artigo não encontrado.",
-    sourceLink: "Abrir fonte",
   },
   en: {
     back: "← All articles",
@@ -27,7 +26,6 @@ const copy = {
     updated: "Updated on",
     next: "Next article",
     notFound: "Article not found.",
-    sourceLink: "Open source",
   },
 } satisfies Record<BlogLang, Record<string, string>>;
 
