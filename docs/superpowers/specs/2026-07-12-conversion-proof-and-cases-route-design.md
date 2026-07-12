@@ -4,7 +4,7 @@
 
 ## Goal
 
-Fix the published `/cases` 403 and replace unsupported homepage statistics and testimonials with an exceptional, case-led proof section that improves trust and conversion without changing the existing hero.
+Fix the published `/cases` 403 and consolidate the homepage's selected work, unsupported statistics, and testimonials into one exceptional case-led proof section that improves trust and conversion without changing the existing hero.
 
 ## Approved scope
 
@@ -12,7 +12,7 @@ Fix the published `/cases` 403 and replace unsupported homepage statistics and t
 - Make direct requests to `/cases` and `/cases/` return the generated cases index instead of HTTP 403.
 - Keep the honest localized `mailto:` contact flow.
 - Use `contato@aureondigital.co` for Portuguese and `contact@aureondigital.co` for English.
-- Replace the homepage `Stats` and `Testimonials` sections with one cinematic case-proof section.
+- Replace the homepage `CasePreview`, `Stats`, and `Testimonials` sections with one cinematic case-proof section.
 - Do not add a backend, scheduling service, carousel, dependency, analytics, or unrelated refactor.
 - Keep implementation local until the user separately authorizes push or deployment.
 
@@ -26,7 +26,7 @@ This is the smallest fix because it preserves the media directory, the safe `!-d
 
 ### Structure
 
-`Stats` and `Testimonials` will be removed from the homepage and replaced by a single `CaseProof` component between the selected-work preview and contact section.
+`CasePreview`, `Stats`, and `Testimonials` will be removed from the homepage and replaced by a single `CaseProof` component between `Process` and `Contact`. This prevents Dove, MINI, and Arctic Fox from appearing in two consecutive sections and shortens the journey to contact.
 
 The section uses approved direction A, **Case cinematográfico**:
 
@@ -58,10 +58,10 @@ The current implementation already maps Portuguese to `contato@aureondigital.co`
 ## Components and files
 
 - Modify `vite.config.ts` to emit `dist/cases/index.html`.
-- Modify `src/App.tsx` to render `CaseProof` instead of `Stats` and `Testimonials`.
+- Modify `src/App.tsx` to render `CaseProof` instead of `CasePreview`, `Stats`, and `Testimonials`.
 - Create `src/components/CaseProof.tsx` for the bilingual case-led proof composition.
 - Modify `src/styles/main.scss` for responsive cinematic styling and reduced-motion behavior.
-- Delete `src/components/Stats.tsx` and `src/components/Testimonials.tsx` after replacement.
+- Delete `src/components/CasePreview.tsx`, `src/components/Stats.tsx`, and `src/components/Testimonials.tsx` after replacement.
 - Modify `tests/smoke.spec.ts` for static-route, contact, semantic, link, content-removal, and responsive regressions.
 
 No new data file is needed; `CaseProof` consumes the existing catalog and helpers from `src/lib/cases.ts`.
@@ -72,7 +72,7 @@ Implementation follows test-first development.
 
 1. A failing build-artifact test proves `dist/cases/index.html` is initially missing, then verifies its cases metadata and assets after the fix.
 2. Existing contact coverage is extended to explicitly protect the Portuguese and English destinations; this is regression coverage for unchanged behavior, not a new TDD production cycle.
-3. A failing homepage test requires the new case-proof landmark, links to Dove/MINI/Arctic Fox, the three factual scope signals, and absence of the old testimonials and unsupported aggregate claims.
+3. A failing homepage test requires the new case-proof landmark, links to Dove/MINI/Arctic Fox, the three factual scope signals, and absence of the old selected-work preview, testimonials, and unsupported aggregate claims.
 4. A failing mobile test verifies no horizontal overflow and visible case-proof links at 390px.
 5. Final verification runs focused Playwright tests, lint, root build, GitHub Pages build, `git diff --check`, and the full relevant browser suite.
 6. After deployment is separately authorized, an HTTP check must confirm both `/cases` and `/cases/` return 200; local tests alone cannot prove the server result.
