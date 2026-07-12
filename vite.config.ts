@@ -96,8 +96,14 @@ export default defineConfig({
         if (!existsSync(index)) return;
 
         const html = readFileSync(index, 'utf8');
+        const casesDirectory = resolve(__dirname, 'dist/cases');
+        mkdirSync(casesDirectory, { recursive: true });
+        writeFileSync(
+          resolve(casesDirectory, 'index.html'),
+          withPageMeta(html, resolvePageMeta('/cases', 'pt')),
+        );
         for (const item of cases) {
-          const directory = resolve(__dirname, 'dist/cases', item.id);
+          const directory = resolve(casesDirectory, item.id);
           mkdirSync(directory, { recursive: true });
           writeFileSync(resolve(directory, 'index.html'), withPageMeta(html, resolvePageMeta(`/cases/${item.id}`, 'pt')));
         }

@@ -173,6 +173,17 @@ test('uppercase real case route renders the canonical Dove case', async ({ page 
   );
 });
 
+test('build emits a static cases index for direct Hostinger requests', async () => {
+  const html = await readFile(resolve(process.cwd(), 'dist', 'cases', 'index.html'), 'utf8');
+  const meta = resolvePageMeta('/cases', 'pt');
+
+  expect(html).toContain('<html lang="pt-BR">');
+  expect(html).toContain(`<title>${meta.title}</title>`);
+  expect(html).toContain(`<meta name="description" content="${meta.description}"`);
+  expect(html).toContain(`<link rel="canonical" href="${meta.canonical}"`);
+  expect(html).toContain('/assets/');
+});
+
 test('build emits static Portuguese social metadata for every real case', async () => {
   const rootHtml = await readFile(resolve(process.cwd(), 'dist', 'index.html'), 'utf8');
   const rootAssets = [...rootHtml.matchAll(/(?:src|href)="([^"]*\/assets\/[^"]+)"/g)].map(([, asset]) => asset);
@@ -459,6 +470,11 @@ test('contact href serializes RFC 6068 spaces and CRLF exactly', () => {
   expect(contactHref('en', 'Project inquiry', 'Line one\nLine two')).toBe(
     'mailto:contact@aureondigital.co?subject=Project%20inquiry&body=Line%20one%0D%0ALine%20two',
   );
+});
+
+test('contact href uses the approved localized inboxes', () => {
+  expect(contactHref('pt')).toBe('mailto:contato@aureondigital.co');
+  expect(contactHref('en')).toBe('mailto:contact@aureondigital.co');
 });
 
 test('contact service selection uses the corresponding localized label after a language change', async ({ page }) => {
