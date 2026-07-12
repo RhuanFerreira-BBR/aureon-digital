@@ -96,7 +96,7 @@ test('Pages subpath case media', async ({ page }) => {
   expect(galleryResponse.status()).toBe(200);
 
   await page.goto('/aureon-digital/');
-  const preview = page.locator('[data-case-preview]').filter({ hasText: 'Dove' }).locator('img');
+  const preview = page.locator('[data-case-proof-feature] img');
   await expect(preview).toHaveAttribute('src', '/aureon-digital/cases/dove-global-aem/hero.jpg');
   expect(await preview.evaluate(image => image.naturalWidth)).toBeGreaterThan(0);
 
@@ -233,13 +233,34 @@ test('sitemap case slugs exactly match the portfolio catalog', async () => {
   expect(slugs).toEqual(cases.map(({ id }) => id));
 });
 
-test('homepage shows the three configured portfolio features', async ({ page }) => {
+test('homepage consolidates proof around real linked cases', async ({ page }) => {
   await page.goto('/');
 
-  await expect(page.locator('[data-case-preview]')).toHaveCount(3);
-  await expect(page.getByText('Dove', { exact: true })).toBeVisible();
-  await expect(page.getByText('MINI Finance Matcher', { exact: true })).toBeVisible();
-  await expect(page.getByText('Arctic Fox Hair Color', { exact: true })).toBeVisible();
+  const proof = page.locator('[data-case-proof]');
+  await expect(proof).toHaveCount(1);
+  await expect(proof.locator('[data-case-proof-feature]')).toHaveAttribute('href', '/cases/dove-global-aem');
+  await expect(proof.locator('[data-case-proof-supporting]')).toHaveCount(2);
+  await expect(proof.getByRole('link', { name: /MINI Finance Matcher/ })).toHaveAttribute('href', '/cases/mini-finance-matcher-react');
+  await expect(proof.getByRole('link', { name: /Arctic Fox Hair Color/ })).toHaveAttribute('href', '/cases/arctic-fox-headless-commerce');
+  await expect(proof.locator('dd')).toHaveText(['14', '5', 'Global']);
+  await expect(proof.getByText('Trabalho realizado em equipe via agência parceira para a Unilever.', { exact: true })).toBeVisible();
+  await expect(page.locator('[data-case-preview]')).toHaveCount(0);
+  await expect(page.locator('.hero-metrics')).toHaveCount(0);
+  await expect(page.getByText('Carlos M.', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('ROI médio', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('98%', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: /Fazemos você/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Iniciar projeto' }).first()).toBeVisible();
+});
+
+test('case proof follows the language selector', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'EN', exact: true }).click();
+
+  const proof = page.locator('[data-case-proof]');
+  await expect(proof.getByRole('heading', { name: 'Work you can explore.' })).toBeVisible();
+  await expect(proof.getByText('Work delivered as part of an agency partner team for Unilever.', { exact: true })).toBeVisible();
+  await expect(proof.getByRole('link', { name: /Explore Dove case/ })).toBeVisible();
 });
 
 test('cases index filters by platform and discipline and recovers from empty results', async ({ page }) => {
@@ -525,7 +546,7 @@ test('mobile menu opens and exposes navigation', async ({ page }) => {
   expect(ctaBox?.height).toBeGreaterThanOrEqual(44);
 });
 
-test('mobile contact fields stack and the hero cue does not overlap metrics', async ({ page }) => {
+test('mobile contact fields stack and the hero cue stays hidden', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
 

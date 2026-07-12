@@ -7,9 +7,7 @@ import { Hero } from "./components/Hero";
 import { Marquee } from "./components/Marquee";
 import { Services } from "./components/Services";
 import { Process } from "./components/Process";
-import { CasePreview } from "./components/CasePreview";
-import { Stats } from "./components/Stats";
-import { Testimonials } from "./components/Testimonials";
+import { CaseProof } from "./components/CaseProof";
 import { Contact } from "./components/Contact";
 import { CasesPage } from "./components/CasesPage";
 import { CaseDetailPage } from "./components/CaseDetailPage";
@@ -31,9 +29,7 @@ function HomePage({ lang }: { lang: Lang }) {
       <Marquee lang={lang} />
       <Services lang={lang} />
       <Process lang={lang} />
-      <CasePreview lang={lang} />
-      <Stats lang={lang} />
-      <Testimonials lang={lang} />
+      <CaseProof lang={lang} />
       <Contact lang={lang} />
     </main>
   );

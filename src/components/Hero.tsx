@@ -14,9 +14,6 @@ const t = {
     cta1: "Start your project",
     cta2: "See our work",
     scroll: "Scroll to explore",
-    stat1n: "3×", stat1l: "Avg. traffic growth",
-    stat2n: "40+", stat2l: "Projects delivered",
-    stat3n: "98%", stat3l: "Client satisfaction",
   },
   pt: {
     badge: "Agência de Marketing Digital",
@@ -26,9 +23,6 @@ const t = {
     cta1: "Iniciar projeto",
     cta2: "Ver nosso trabalho",
     scroll: "Scroll para explorar",
-    stat1n: "3×", stat1l: "Crescimento médio",
-    stat2n: "40+", stat2l: "Projetos entregues",
-    stat3n: "98%", stat3l: "Satisfação de clientes",
   },
 };
 
@@ -223,27 +217,6 @@ export function Hero({ lang }: HeroProps) {
             </a>
             <Link to="/cases" className="btn-outline" style={{ textDecoration: "none" }}>{t[lang].cta2}</Link>
           </div>
-        </div>
-
-        {/* Stats row */}
-        <div className="hero-metrics" style={{
-          display: "flex", gap: 0, marginTop: 80, flexWrap: "wrap",
-          animation: "fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.55s both",
-        }}>
-          {[
-            { n: t[lang].stat1n, l: t[lang].stat1l },
-            { n: t[lang].stat2n, l: t[lang].stat2l },
-            { n: t[lang].stat3n, l: t[lang].stat3l },
-          ].map((s, i) => (
-            <div key={i} className="hero-metric" style={{
-              padding: "28px 40px",
-              borderLeft: i === 0 ? "none" : "1px solid var(--border-dim)",
-              ...(i === 0 ? { paddingLeft: 0 } : {}),
-            }}>
-              <div className="metric-number" style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(28px, 4vw, 44px)", color: "var(--gold)", lineHeight: 1 }}>{s.n}</div>
-              <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4, letterSpacing: "0.02em" }}>{s.l}</div>
-            </div>
-          ))}
         </div>
 
         {/* Scroll cue */}
