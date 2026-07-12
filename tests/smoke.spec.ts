@@ -42,6 +42,17 @@ test('English browser preferences start the general site in English', async ({ p
   await expect(page.getByRole('button', { name: 'PT', exact: true })).toBeVisible();
 });
 
+test('storage read failures still start the general site in English', async ({ page }) => {
+  await page.addInitScript(() => {
+    Storage.prototype.getItem = () => { throw new Error('storage read failed'); };
+    Object.defineProperty(navigator, 'languages', { configurable: true, get: () => ['en-US'] });
+    Object.defineProperty(navigator, 'language', { configurable: true, get: () => 'en-US' });
+  });
+
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: /We make you/ })).toBeVisible();
+});
+
 test('saved manual language overrides the browser preference', async ({ page }) => {
   await page.addInitScript((key) => {
     localStorage.setItem(key, 'pt');
@@ -59,6 +70,16 @@ test('manual language choice survives reload', async ({ page }) => {
   expect(await page.evaluate((key) => localStorage.getItem(key), languageStorageKey)).toBe('en');
 
   await page.reload();
+  await expect(page.getByRole('heading', { name: /We make you/ })).toBeVisible();
+});
+
+test('storage write failures still change the current session language', async ({ page }) => {
+  await page.addInitScript(() => {
+    Storage.prototype.setItem = () => { throw new Error('storage write failed'); };
+  });
+
+  await page.goto('/');
+  await page.getByRole('button', { name: 'EN', exact: true }).click();
   await expect(page.getByRole('heading', { name: /We make you/ })).toBeVisible();
 });
 
