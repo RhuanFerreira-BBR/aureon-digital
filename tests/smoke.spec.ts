@@ -6,7 +6,7 @@ import { expect, test } from '@playwright/test';
 
 import { contactHref } from '../src/lib/contact';
 import { cases, caseMediaUrl, caseText, disciplineLabels } from '../src/lib/cases';
-import { resolvePreferredLanguage } from '../src/lib/language';
+import { languageStorageKey, resolvePreferredLanguage } from '../src/lib/language';
 import { resolvePageMeta } from '../src/lib/seo';
 
 const routes = [
@@ -29,6 +29,37 @@ test('language preference resolver honors saved choices and Portuguese browser v
   expect(resolvePreferredLanguage(null, ['PT-br'])).toBe('pt');
   expect(resolvePreferredLanguage('invalid', ['en-GB'])).toBe('en');
   expect(resolvePreferredLanguage(null, [])).toBe('en');
+});
+
+test('English browser preferences start the general site in English', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'languages', { configurable: true, get: () => ['en-US'] });
+    Object.defineProperty(navigator, 'language', { configurable: true, get: () => 'en-US' });
+  });
+
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: /We make you/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'PT', exact: true })).toBeVisible();
+});
+
+test('saved manual language overrides the browser preference', async ({ page }) => {
+  await page.addInitScript((key) => {
+    localStorage.setItem(key, 'pt');
+    Object.defineProperty(navigator, 'languages', { configurable: true, get: () => ['en-US'] });
+  }, languageStorageKey);
+
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: /Fazemos você/ })).toBeVisible();
+});
+
+test('manual language choice survives reload', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'EN', exact: true }).click();
+  await expect(page.getByRole('heading', { name: /We make you/ })).toBeVisible();
+  expect(await page.evaluate((key) => localStorage.getItem(key), languageStorageKey)).toBe('en');
+
+  await page.reload();
+  await expect(page.getByRole('heading', { name: /We make you/ })).toBeVisible();
 });
 
 for (const route of routes) {

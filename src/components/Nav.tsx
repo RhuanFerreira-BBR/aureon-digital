@@ -5,7 +5,7 @@ import { pairedBlogPath } from "../lib/blog";
 
 interface NavProps {
   lang: "en" | "pt";
-  setLang: (l: "en" | "pt") => void;
+  onLanguageChange: (lang: "en" | "pt") => void;
 }
 
 const t = {
@@ -129,7 +129,7 @@ function ServicesDropdown({ lang, onClose }: { lang: "en" | "pt"; onClose: () =>
   );
 }
 
-export function Nav({ lang, setLang }: NavProps) {
+export function Nav({ lang, onLanguageChange }: NavProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
@@ -170,8 +170,8 @@ export function Nav({ lang, setLang }: NavProps) {
   function changeLanguage() {
     const target = lang === "en" ? "pt" : "en";
     const paired = pairedBlogPath(location, target);
+    onLanguageChange(target);
     if (paired) navigate(paired);
-    else setLang(target);
   }
 
   return (

@@ -4,6 +4,7 @@ import { join, resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
 import { cases } from '../src/lib/cases';
 import { blogIndexPath, blogPath, findBlogPost, legacyBlogRedirects, pairedBlogPath, posts } from '../src/lib/blog';
+import { languageStorageKey } from '../src/lib/language';
 import { resolvePageMeta } from '../src/lib/seo';
 import { splitParagraphLinks } from '../src/components/PostDetailPage';
 
@@ -471,6 +472,17 @@ test('language selector preserves the article', async ({ page }) => {
 
   await page.goto('/en/blog/seo-geo-ai-search');
   await expect(page.getByRole('heading', { level: 1, name: post?.locales.en.title })).toBeVisible();
+});
+
+test('explicit blog locale does not overwrite the saved general preference', async ({ page }) => {
+  await page.addInitScript((key) => localStorage.setItem(key, 'pt'), languageStorageKey);
+
+  await page.goto('/en/blog');
+  await expect(page.getByRole('heading', { level: 1, name: 'Content built to be found — and chosen.' })).toBeVisible();
+  expect(await page.evaluate((key) => localStorage.getItem(key), languageStorageKey)).toBe('pt');
+
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: /Fazemos você/ })).toBeVisible();
 });
 
 test('mixed-case blog routes keep the URL locale and paired navigation', async ({ page }) => {

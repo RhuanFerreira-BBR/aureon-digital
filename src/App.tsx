@@ -18,6 +18,7 @@ import { AboutPage } from "./pages/AboutPage";
 import { ServicesPage } from "./pages/ServicesPage";
 import { PrivacyPage } from "./pages/PrivacyPage";
 import { TermsPage } from "./pages/TermsPage";
+import { readPreferredLanguage, savePreferredLanguage } from "./lib/language";
 import { applyPageMeta, type SiteLang } from "./lib/seo";
 
 type Lang = SiteLang;
@@ -75,7 +76,7 @@ function CursorGlow() {
 }
 
 export default function App() {
-  const [lang, setLang] = useState<Lang>("pt");
+  const [lang, setLang] = useState<Lang>(readPreferredLanguage);
   const { pathname, hash } = useLocation();
   const blogLang: Lang | null = /^\/en\/blog(?:\/|$)/i.test(pathname)
     ? "en"
@@ -83,6 +84,11 @@ export default function App() {
       ? "pt"
       : null;
   const activeLang = blogLang ?? lang;
+
+  function changePreferredLanguage(nextLang: Lang) {
+    setLang(nextLang);
+    savePreferredLanguage(nextLang);
+  }
 
   useEffect(() => {
     if (!blogLang || blogLang === lang) return;
@@ -109,7 +115,7 @@ export default function App() {
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--void)" }}>
       <ScrollProgress />
       <CursorGlow />
-      <Nav lang={activeLang} setLang={setLang} />
+      <Nav lang={activeLang} onLanguageChange={changePreferredLanguage} />
 
       <div style={{ flex: 1 }}>
         <Routes>
