@@ -263,6 +263,34 @@ test('case proof follows the language selector', async ({ page }) => {
   await expect(proof.getByRole('link', { name: /Explore Dove case/ })).toBeVisible();
 });
 
+test('case proof gives the featured case cinematic visual priority', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1200 });
+  await page.goto('/');
+  const proof = page.locator('[data-case-proof]');
+  await proof.scrollIntoViewIfNeeded();
+
+  const featureBox = await proof.locator('[data-case-proof-feature]').boundingBox();
+  const supportingGrid = proof.locator('.case-proof-supporting');
+  const columns = await supportingGrid.evaluate(element => getComputedStyle(element).gridTemplateColumns.split(' ').length);
+
+  expect(featureBox?.height).toBeGreaterThanOrEqual(560);
+  expect(columns).toBe(2);
+  await expect(proof.locator('[data-case-proof-feature]')).toHaveCSS('overflow', 'hidden');
+});
+
+test('mobile case proof stacks without clipping conversion paths', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+
+  const proof = page.locator('[data-case-proof]');
+  await proof.scrollIntoViewIfNeeded();
+  await expect(proof.locator('[data-case-proof-feature]')).toBeVisible();
+  await expect(proof.locator('[data-case-proof-supporting]')).toHaveCount(2);
+  await expect(proof.getByRole('link', { name: 'Ver todos os cases' })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)).toBeTruthy();
+  expect(await proof.locator('.case-proof-supporting').evaluate(element => getComputedStyle(element).gridTemplateColumns.split(' ').length)).toBe(1);
+});
+
 test('cases index filters by platform and discipline and recovers from empty results', async ({ page }) => {
   await page.goto('/cases');
 
