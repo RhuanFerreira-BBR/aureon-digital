@@ -91,12 +91,6 @@ export default function App() {
   }
 
   useEffect(() => {
-    if (!blogLang || blogLang === lang) return;
-    const id = window.setTimeout(() => setLang(blogLang), 0);
-    return () => window.clearTimeout(id);
-  }, [blogLang, lang]);
-
-  useEffect(() => {
     applyPageMeta(pathname, activeLang);
   }, [pathname, activeLang]);
 

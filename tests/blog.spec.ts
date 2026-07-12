@@ -481,8 +481,9 @@ test('explicit blog locale does not overwrite the saved general preference', asy
   await expect(page.getByRole('heading', { level: 1, name: 'Content built to be found — and chosen.' })).toBeVisible();
   expect(await page.evaluate((key) => localStorage.getItem(key), languageStorageKey)).toBe('pt');
 
-  await page.goto('/');
-  await expect(page.getByRole('heading', { name: /Fazemos você/ })).toBeVisible();
+  await page.getByRole('contentinfo').getByRole('link', { name: 'About', exact: true }).click();
+  await expect(page).toHaveURL(/\/about$/);
+  await expect(page.getByRole('heading', { level: 1, name: 'Construímos marcas que são encontradas.' })).toBeVisible();
 });
 
 test('mixed-case blog routes keep the URL locale and paired navigation', async ({ page }) => {
