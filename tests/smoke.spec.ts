@@ -6,6 +6,7 @@ import { expect, test } from '@playwright/test';
 
 import { contactHref } from '../src/lib/contact';
 import { cases, caseMediaUrl, caseText, disciplineLabels } from '../src/lib/cases';
+import { resolvePreferredLanguage } from '../src/lib/language';
 import { resolvePageMeta } from '../src/lib/seo';
 
 const routes = [
@@ -20,6 +21,15 @@ const routes = [
   '/privacy',
   '/terms',
 ];
+
+test('language preference resolver honors saved choices and Portuguese browser variants', () => {
+  expect(resolvePreferredLanguage('pt', ['en-US'])).toBe('pt');
+  expect(resolvePreferredLanguage('en', ['pt-BR'])).toBe('en');
+  expect(resolvePreferredLanguage(null, ['fr-FR', 'pt-PT'])).toBe('pt');
+  expect(resolvePreferredLanguage(null, ['PT-br'])).toBe('pt');
+  expect(resolvePreferredLanguage('invalid', ['en-GB'])).toBe('en');
+  expect(resolvePreferredLanguage(null, [])).toBe('en');
+});
 
 for (const route of routes) {
   test(`renders ${route}`, async ({ page }) => {
