@@ -13,6 +13,7 @@ Fix the published `/cases` 403 and consolidate the homepage's selected work, uns
 - Keep the honest localized `mailto:` contact flow.
 - Use `contato@aureondigital.co` for Portuguese and `contact@aureondigital.co` for English.
 - Replace the homepage `CasePreview`, `Stats`, and `Testimonials` sections plus the hero metrics row with one cinematic case-proof section.
+- Remove the About aggregate-numbers block because it repeats unsupported claims; preserve the About narrative and CTA unchanged.
 - Do not add a backend, scheduling service, carousel, dependency, analytics, or unrelated refactor.
 - Keep implementation local until the user separately authorizes push or deployment.
 

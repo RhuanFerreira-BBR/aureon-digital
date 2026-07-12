@@ -20,13 +20,6 @@ const t = {
     ],
     teamTitle: "The team",
     teamText: "Aureon was founded in 2026 by a team of designers, developers, and growth strategists who got tired of watching great businesses be invisible online. We're based in Brazil, work globally, and move fast.",
-    statsTitle: "In numbers",
-    stats: [
-      { number: "40+", label: "Projects delivered" },
-      { number: "3×", label: "Average organic growth" },
-      { number: "4–8wk", label: "Average delivery time" },
-      { number: "100%", label: "Client code ownership" },
-    ],
     ctaTitle: "Ready to work together?",
     ctaText: "Tell us about your project. We'll tell you exactly how we'd approach it.",
     ctaBtn: "Start a conversation",
@@ -46,13 +39,6 @@ const t = {
     ],
     teamTitle: "O time",
     teamText: "A Aureon foi fundada em 2026 por um time de designers, desenvolvedores e estrategistas de crescimento que se cansaram de ver ótimos negócios serem invisíveis online. Somos baseados no Brasil, atuamos globalmente e nos movemos rápido.",
-    statsTitle: "Em números",
-    stats: [
-      { number: "40+", label: "Projetos entregues" },
-      { number: "3×", label: "Crescimento orgânico médio" },
-      { number: "4–8sem", label: "Tempo médio de entrega" },
-      { number: "100%", label: "Código pertence ao cliente" },
-    ],
     ctaTitle: "Pronto para trabalhar juntos?",
     ctaText: "Conte sobre seu projeto. Te diremos exatamente como abordaríamos.",
     ctaBtn: "Iniciar conversa",
@@ -128,45 +114,6 @@ export function AboutPage({ lang }: AboutPageProps) {
           <p style={{ color: "var(--text)", fontSize: 20, lineHeight: 1.7, margin: 0, maxWidth: 640 }}>
             {tx.missionText}
           </p>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section style={{ maxWidth: 840, margin: "0 auto", padding: "0 24px 80px" }}>
-        <h2 style={{
-          fontFamily: "var(--font-display)",
-          fontSize: 13,
-          color: "var(--gold)",
-          letterSpacing: "0.15em",
-          textTransform: "uppercase",
-          marginBottom: 32,
-          textAlign: "center",
-        }}>
-          {tx.statsTitle}
-        </h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 16 }}>
-          {tx.stats.map((s, i) => (
-            <div key={i} style={{
-              padding: "32px 24px",
-              background: "rgba(255,255,255,0.02)",
-              border: "1px solid rgba(255,255,255,0.06)",
-              borderRadius: 12,
-              textAlign: "center",
-            }}>
-              <div style={{
-                fontFamily: "var(--font-display)",
-                fontSize: 40,
-                color: "var(--gold)",
-                lineHeight: 1,
-                marginBottom: 8,
-              }}>
-                {s.number}
-              </div>
-              <div style={{ color: "var(--text-muted)", fontSize: 13, lineHeight: 1.4 }}>
-                {s.label}
-              </div>
-            </div>
-          ))}
         </div>
       </section>
 

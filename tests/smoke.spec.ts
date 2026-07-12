@@ -291,6 +291,19 @@ test('mobile case proof stacks without clipping conversion paths', async ({ page
   expect(await proof.locator('.case-proof-supporting').evaluate(element => getComputedStyle(element).gridTemplateColumns.split(' ').length)).toBe(1);
 });
 
+test('about removes unsupported aggregate claims in both languages', async ({ page }) => {
+  await page.goto('/about');
+
+  for (const claim of ['40+', '3×', '4–8sem', '100%', 'Projetos entregues', 'Crescimento orgânico médio']) {
+    await expect(page.getByText(claim, { exact: true })).toHaveCount(0);
+  }
+
+  await page.getByRole('button', { name: 'EN', exact: true }).click();
+  for (const claim of ['40+', '3×', '4–8wk', '100%', 'Projects delivered', 'Average organic growth']) {
+    await expect(page.getByText(claim, { exact: true })).toHaveCount(0);
+  }
+});
+
 test('cases index filters by platform and discipline and recovers from empty results', async ({ page }) => {
   await page.goto('/cases');
 

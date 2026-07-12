@@ -454,21 +454,6 @@ h1,h2,h3,h4,h5,h6 { font-family: var(--font-display); font-weight: 700; line-hei
     display: none !important;
   }
 
-  .hero-metrics {
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    margin-top: 64px !important;
-    gap: 0 !important;
-  }
-
-  .hero-metric {
-    min-width: 0;
-    padding: 20px 24px !important;
-  }
-
-  .hero-metric:first-child {
-    padding-left: 0 !important;
-  }
 }
 
 @media (max-width: 520px) {
@@ -488,24 +473,10 @@ h1,h2,h3,h4,h5,h6 { font-family: var(--font-display); font-weight: 700; line-hei
     grid-template-columns: 1fr !important;
   }
 
-  .hero-metrics,
   .teaser-metrics {
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     gap: 0 !important;
-  }
-
-  .hero-metrics {
-    margin-top: 48px !important;
-  }
-
-  .hero-metric {
-    padding: 0 12px !important;
-  }
-
-  .hero-metric:first-child {
-    border-left: 0 !important;
-    padding-left: 0 !important;
   }
 
   .teaser-metric {

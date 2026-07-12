@@ -50,7 +50,7 @@ export function CaseProof({ lang }: CaseProofProps) {
         <Link className="case-proof-feature" data-case-proof-feature to={`/cases/${primary.id}`}>
           <img src={caseMediaUrl(primary.heroImage.src, import.meta.env.BASE_URL)} alt={caseText(primary.heroImage.alt, lang)} />
           <span className="case-proof-feature-wash" aria-hidden="true" />
-          <span className="case-proof-feature-content">
+          <div className="case-proof-feature-content">
             <small>{copy[lang].feature} · {primary.client} · {primary.platform}</small>
             <strong>{caseText(primary.title, lang)}</strong>
             {primary.attribution && <em>{caseText(primary.attribution, lang)}</em>}
@@ -58,7 +58,7 @@ export function CaseProof({ lang }: CaseProofProps) {
               {facts.map((value, index) => <div key={copy[lang].facts[index]}><dt>{copy[lang].facts[index]}</dt><dd>{value}</dd></div>)}
             </dl>
             <span className="case-proof-link-label">{copy[lang].explore} →</span>
-          </span>
+          </div>
         </Link>
 
         <div className="case-proof-supporting" aria-label={copy[lang].supporting}>
